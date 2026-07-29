@@ -157,10 +157,13 @@ public class PhotoViewer {
        Region spacer = new Region();
        HBox.setHgrow(spacer, Priority.ALWAYS);
 
+       Region spacer2 = new Region();
+       HBox.setHgrow(spacer2, Priority.ALWAYS);
+
        // Three-dot menu button
        Button menuBtn = createCircleIconBtn("\u22ef", 16, e -> showMenu());
 
-       HBox bar = new HBox(backBtn, spacer, datePill, spacer, menuBtn);
+       HBox bar = new HBox(backBtn, spacer, datePill, spacer2, menuBtn);
        bar.setAlignment(Pos.CENTER);
        bar.setPadding(new Insets(8, 12, 8, 12));
        bar.setStyle("-fx-background-color: rgba(0,0,0,0.85);");
