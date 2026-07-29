@@ -362,10 +362,11 @@ public class PhotoViewer {
         imageView.setFitWidth(winW);
         imageView.setFitHeight(winH);
 
-        resetZoom();
-        resetImagePosition();
-        updateInfo();
-    }
+       resetZoom();
+       resetImagePosition();
+       updateInfo();
+       syncFavoriteIcon();
+   }
 
     private void resetZoom() {
         scale = 1.0;
@@ -408,6 +409,12 @@ public class PhotoViewer {
           currentPhoto.setFavorite(!currentPhoto.isFavorite());
           heartPath.setFill(currentPhoto.isFavorite() ? Color.WHITE : Color.TRANSPARENT);
           mainWindow.setStatus(currentPhoto.isFavorite() ? "Favorited" : "Unfavorited");
+      }
+  }
+
+  private void syncFavoriteIcon() {
+      if (currentPhoto != null && heartPath != null) {
+          heartPath.setFill(currentPhoto.isFavorite() ? Color.WHITE : Color.TRANSPARENT);
       }
   }
 
