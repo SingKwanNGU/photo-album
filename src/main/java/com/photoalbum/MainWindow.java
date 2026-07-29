@@ -13,6 +13,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
@@ -105,11 +106,19 @@ public class MainWindow {
        batchLabel.setFont(Font.font("Microsoft YaHei", 12));
        batchLabel.setTextFill(Color.web("#1d1d1f"));
 
-       Button batchFavBtn = new Button("Favorite");
-       batchFavBtn.setFont(Font.font("Microsoft YaHei", 12));
-       batchFavBtn.setTextFill(Color.web("#007AFF"));
-       batchFavBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
-       batchFavBtn.setOnAction(e -> batchFavorite());
+      SVGPath heartIcon = new SVGPath();
+      heartIcon.setContent("M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 " +
+              "2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09 " +
+              "C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 " +
+              "22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z");
+      heartIcon.setFill(Color.TRANSPARENT);
+      heartIcon.setStroke(Color.web("#007AFF"));
+      heartIcon.setStrokeWidth(1.2);
+
+      Button batchFavBtn = new Button();
+      batchFavBtn.setGraphic(heartIcon);
+      batchFavBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 6;");
+      batchFavBtn.setOnAction(e -> batchFavorite());
 
        Button batchDelBtn = new Button("Delete");
        batchDelBtn.setFont(Font.font("Microsoft YaHei", 12));
