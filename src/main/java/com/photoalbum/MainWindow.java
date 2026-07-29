@@ -120,11 +120,17 @@ public class MainWindow {
       batchFavBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 6;");
       batchFavBtn.setOnAction(e -> batchFavorite());
 
-       Button batchDelBtn = new Button("Delete");
-       batchDelBtn.setFont(Font.font("Microsoft YaHei", 12));
-       batchDelBtn.setTextFill(Color.web("#FF3B30"));
-       batchDelBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
-       batchDelBtn.setOnAction(e -> batchDelete());
+      SVGPath trashIcon = new SVGPath();
+      trashIcon.setContent("M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z" +
+              "M19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z");
+      trashIcon.setFill(Color.TRANSPARENT);
+      trashIcon.setStroke(Color.web("#FF3B30"));
+      trashIcon.setStrokeWidth(1.2);
+
+      Button batchDelBtn = new Button();
+      batchDelBtn.setGraphic(trashIcon);
+      batchDelBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 6;");
+      batchDelBtn.setOnAction(e -> batchDelete());
 
        batchBar.getChildren().addAll(batchLabel, batchFavBtn, batchDelBtn);
 
