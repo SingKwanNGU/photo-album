@@ -297,18 +297,14 @@ public class PhotoViewer {
         translateTransform.setY(translateY);
     }
 
-    private void toggleOverlay() {
-        overlayVisible = !overlayVisible;
-        double targetOpacity = overlayVisible ? 1.0 : 0.0;
+   private void toggleOverlay() {
+       overlayVisible = !overlayVisible;
+       double targetOpacity = overlayVisible ? 1.0 : 0.0;
 
-        FadeTransition t1 = new FadeTransition(Duration.millis(250), topOverlay);
-        t1.setToValue(targetOpacity);
-        t1.play();
-
-        FadeTransition t2 = new FadeTransition(Duration.millis(250), bottomOverlay);
-        t2.setToValue(targetOpacity);
-        t2.play();
-    }
+       FadeTransition t1 = new FadeTransition(Duration.millis(250), topOverlay);
+       t1.setToValue(targetOpacity);
+       t1.play();
+   }
 
     private void navigateTo(int index) {
         currentIndex = index;
