@@ -107,9 +107,11 @@ public class PhotoViewer {
        imageContainer = new StackPane(prevImageView, nextImageView, imageView);
        imageContainer.setStyle("-fx-background-color: black;");
        imageContainer.setAlignment(Pos.CENTER);
+       imageContainer.setPrefSize(390, 520);
+       imageContainer.setMaxSize(390, 520);
 
-       imageView.fitWidthProperty().bind(imageContainer.widthProperty());
-       imageView.fitHeightProperty().bind(imageContainer.heightProperty());
+       imageView.setFitWidth(390);
+       imageView.setFitHeight(520);
 
        navBar = createNavBar();
        bottomOverlay = createBottomOverlay();
