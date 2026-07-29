@@ -110,8 +110,8 @@ public class PhotoViewer {
        imageContainer.setPrefSize(390, 520);
        imageContainer.setMaxSize(390, 520);
 
-       imageView.setFitWidth(390);
-       imageView.setFitHeight(520);
+       imageView.fitWidthProperty().bind(imageContainer.widthProperty());
+       imageView.fitHeightProperty().bind(imageContainer.heightProperty());
 
        navBar = createNavBar();
        bottomOverlay = createBottomOverlay();
