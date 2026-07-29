@@ -51,9 +51,23 @@ public class MainWindow {
         this.stage = stage;
         this.photoGridView = new PhotoGridView(this);
         this.albumListView = new AlbumListView(this);
-        this.photoViewer = new PhotoViewer(this);
+       this.photoViewer = new PhotoViewer(this);
 
-        // Top bar
+       // iOS-style status bar
+       HBox statusBar = new HBox();
+       statusBar.setPadding(new Insets(8, 20, 2, 20));
+       statusBar.setStyle("-fx-background-color: rgba(248,248,248,0.92);");
+       statusBar.setMinHeight(28);
+
+       Label clockLabel = new Label("9:41");
+       clockLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 12));
+       clockLabel.setTextFill(Color.web("#1d1d1f"));
+
+       Region sPad = new Region();
+       HBox.setHgrow(sPad, Priority.ALWAYS);
+       statusBar.getChildren().addAll(sPad, clockLabel);
+
+       // Top bar
         HBox topBar = new HBox();
         topBar.setAlignment(Pos.CENTER_LEFT);
         topBar.setPadding(new Insets(10, 16, 10, 16));
@@ -149,8 +163,10 @@ public class MainWindow {
         tabBar.setSpacing(40);
 
         // Root
-        BorderPane mainPane = new BorderPane();
-        mainPane.setTop(topBar);
+       BorderPane mainPane = new BorderPane();
+       VBox topSection = new VBox(0, statusBar, topBar);
+       topSection.setStyle("-fx-background-color: rgba(248,248,248,0.92);");
+       mainPane.setTop(topSection);
        mainPane.setCenter(contentArea);
        mainPane.setBottom(new VBox(0, batchBar, statusLabel, tabBar));
        mainPane.setStyle("-fx-background-color: #f2f2f7;");
