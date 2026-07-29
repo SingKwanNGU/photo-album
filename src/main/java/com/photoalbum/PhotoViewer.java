@@ -180,7 +180,7 @@ public class PhotoViewer {
        bar.setAlignment(Pos.CENTER);
        bar.setSpacing(28);
        bar.setPadding(new Insets(0, 16, 30, 16));
-       bar.setStyle("-fx-background-color: linear-gradient(to top, rgba(0,0,0,0.7), transparent);");
+       bar.setStyle("-fx-background-color: rgba(0,0,0,0.85);");
        bar.setMinHeight(80);
        bar.setMaxHeight(80);
 
@@ -418,12 +418,7 @@ public class PhotoViewer {
     }
 
    private void toggleOverlay() {
-       overlayVisible = !overlayVisible;
-       double targetOpacity = overlayVisible ? 1.0 : 0.0;
-
-       FadeTransition ft = new FadeTransition(Duration.millis(250), bottomOverlay);
-       ft.setToValue(targetOpacity);
-       ft.play();
+       // Bottom toolbar stays always visible
    }
 
     private void navigateTo(int index) {
