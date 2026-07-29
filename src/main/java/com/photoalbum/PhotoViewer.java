@@ -96,11 +96,14 @@ public class PhotoViewer {
         nextImageView.setOpacity(0);
         nextImageView.setVisible(false);
 
-        imageContainer = new StackPane(prevImageView, nextImageView, imageView);
-        imageContainer.setStyle("-fx-background-color: black;");
-        imageContainer.setAlignment(Pos.CENTER);
+       imageContainer = new StackPane(prevImageView, nextImageView, imageView);
+       imageContainer.setStyle("-fx-background-color: black;");
+       imageContainer.setAlignment(Pos.CENTER);
 
-        topOverlay = createTopOverlay();
+       imageView.fitWidthProperty().bind(imageContainer.widthProperty());
+       imageView.fitHeightProperty().bind(imageContainer.heightProperty());
+
+       topOverlay = createTopOverlay();
         bottomOverlay = createBottomOverlay();
 
         root = new StackPane(imageContainer, topOverlay, bottomOverlay);
@@ -386,11 +389,6 @@ public class PhotoViewer {
    private void loadCurrentPhoto() {
        Image img = PhotoService.getInstance().loadFullImage(currentPhoto.getPath());
        imageView.setImage(img);
-
-       double winW = mainWindow.getStage().getScene().getWidth();
-       double winH = mainWindow.getStage().getScene().getHeight();
-       imageView.setFitWidth(winW);
-       imageView.setFitHeight(winH);
 
        resetZoom();
        resetImagePosition();
