@@ -39,10 +39,11 @@ public class PhotoViewer {
     private final ImageView imageView;
     private final VBox topOverlay;
     private final HBox bottomOverlay;
-   private Label photoNameLabel;
-   private Label photoDateLabel;
+  private Label photoNameLabel;
+  private Label photoDateLabel;
+  private Label timeLabel;
 
-   private Button favoriteBtn;
+  private Button favoriteBtn;
    private SVGPath heartPath;
    private boolean confirmVisible = false;
    private Timeline slideshowTimer;
@@ -132,14 +133,21 @@ public class PhotoViewer {
        backBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;");
        backBtn.setOnAction(e -> close());
 
-       // Date pill: iOS-style rounded capsule at top center
+       // Date pill: two-line capsule
        photoDateLabel = new Label("");
-       photoDateLabel.setFont(Font.font("Microsoft YaHei", 12));
-       photoDateLabel.setTextFill(Color.WHITE);
-       photoDateLabel.setStyle("-fx-background-color: rgba(58,58,60,0.85); " +
-               "-fx-background-radius: 14; -fx-padding: 4 14 4 14;");
+      photoDateLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 15));
+      photoDateLabel.setTextFill(Color.WHITE);
 
-       HBox dateRow = new HBox(photoDateLabel);
+      timeLabel = new Label("");
+      timeLabel.setFont(Font.font("Microsoft YaHei", 11));
+      timeLabel.setTextFill(Color.web("#cccccc"));
+
+       VBox datePill = new VBox(1, photoDateLabel, timeLabel);
+       datePill.setAlignment(Pos.CENTER);
+       datePill.setStyle("-fx-background-color: rgba(58,58,60,0.85); " +
+               "-fx-background-radius: 16; -fx-padding: 6 18 6 18;");
+
+       HBox dateRow = new HBox(datePill);
        dateRow.setAlignment(Pos.CENTER);
        dateRow.setPadding(new Insets(6, 0, 0, 0));
 
@@ -405,11 +413,14 @@ public class PhotoViewer {
         root.setCursor(Cursor.DEFAULT);
     }
 
-   private void updateInfo() {
-       photoDateLabel.setText(currentPhoto.getDateString() + "  " +
-               currentPhoto.getTimeString() + "  " +
-               currentPhoto.getFormattedSize());
-   }
+  private void updateInfo() {
+       int m = currentPhoto.getDate().getMonthValue();
+       int d = currentPhoto.getDate().getDayOfMonth();
+       int h = currentPhoto.getDate().getHour();
+       int min = currentPhoto.getDate().getMinute();
+       photoDateLabel.setText(m + "\u6708" + d + "\u65e5");
+       timeLabel.setText(String.format("%02d:%02d", h, min));
+  }
 
     public StackPane getView() {
         return root;
