@@ -183,11 +183,14 @@ public class PhotoViewer {
                "C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 " +
                "22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z");
        heartPath.setFill(Color.TRANSPARENT);
-       heartPath.setStroke(Color.web("#1d1d1f"));
+       heartPath.setStroke(Color.WHITE);
        heartPath.setStrokeWidth(1.2);
 
        favoriteBtn = new Button();
-       favoriteBtn.setGraphic(wrapCircleIcon(heartPath));
+       StackPane heartIcon = new StackPane(heartPath);
+       heartIcon.setMinSize(26, 26);
+       heartIcon.setMaxSize(26, 26);
+       favoriteBtn.setGraphic(heartIcon);
        favoriteBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 8;");
        favoriteBtn.setOnAction(e -> toggleFavorite());
        return favoriteBtn;
@@ -195,52 +198,38 @@ public class PhotoViewer {
 
    private Button createTrashBtn() {
        SVGPath trash = new SVGPath();
-       trash.setContent("M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z" +
-               "M19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z");
+       trash.setContent("M9 4v1H5v2h14V5h-4V4H9z" +
+               "M6 7v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6z" +
+               "M10 9v10h2V9h-2zM14 9v10h2V9h-2z");
        trash.setFill(Color.TRANSPARENT);
-       trash.setStroke(Color.web("#1d1d1f"));
+       trash.setStroke(Color.WHITE);
        trash.setStrokeWidth(1.2);
-       return makeCircleBtn(trash, this::showDeleteConfirm);
+       return makeIconBtn(trash, this::showDeleteConfirm);
    }
 
    private Button createInfoBtn() {
        Circle circle = new Circle(10.5);
        circle.setFill(Color.TRANSPARENT);
-       circle.setStroke(Color.web("#1d1d1f"));
+       circle.setStroke(Color.WHITE);
        circle.setStrokeWidth(1.2);
 
        Label iLabel = new Label("i");
        iLabel.setFont(Font.font("Serif", FontWeight.BOLD, 13));
-       iLabel.setTextFill(Color.web("#1d1d1f"));
+       iLabel.setTextFill(Color.WHITE);
 
        StackPane icon = new StackPane(circle, iLabel);
        icon.setMinSize(24, 24);
        icon.setMaxSize(24, 24);
 
-       return makeCircleBtn(icon, this::showInfo);
+       return makeIconBtn(icon, this::showInfo);
    }
 
-   private Button makeCircleBtn(javafx.scene.Node icon, Runnable action) {
-       Circle bg = new Circle(15);
-       bg.setFill(Color.web("#3a3a3c"));
-       StackPane circleIcon = new StackPane(bg, icon);
-       circleIcon.setMinSize(30, 30);
-       circleIcon.setMaxSize(30, 30);
-
+   private Button makeIconBtn(javafx.scene.Node icon, Runnable action) {
        Button btn = new Button();
-       btn.setGraphic(circleIcon);
+       btn.setGraphic(icon);
        btn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 8;");
        btn.setOnAction(e -> action.run());
        return btn;
-   }
-
-   private StackPane wrapCircleIcon(javafx.scene.Node icon) {
-       Circle bg = new Circle(15);
-       bg.setFill(Color.web("#3a3a3c"));
-       StackPane circleIcon = new StackPane(bg, icon);
-       circleIcon.setMinSize(30, 30);
-       circleIcon.setMaxSize(30, 30);
-       return circleIcon;
    }
 
    private void setupGestures() {
@@ -477,14 +466,14 @@ public class PhotoViewer {
   private void toggleFavorite() {
       if (currentPhoto != null) {
           currentPhoto.setFavorite(!currentPhoto.isFavorite());
-          heartPath.setFill(currentPhoto.isFavorite() ? Color.web("#1d1d1f") : Color.TRANSPARENT);
+          heartPath.setFill(currentPhoto.isFavorite() ? Color.WHITE : Color.TRANSPARENT);
           mainWindow.setStatus(currentPhoto.isFavorite() ? "Favorited" : "Unfavorited");
       }
   }
 
  private void syncFavoriteIcon() {
      if (currentPhoto != null && heartPath != null) {
-         heartPath.setFill(currentPhoto.isFavorite() ? Color.web("#1d1d1f") : Color.TRANSPARENT);
+         heartPath.setFill(currentPhoto.isFavorite() ? Color.WHITE : Color.TRANSPARENT);
      }
  }
 

@@ -121,8 +121,9 @@ public class MainWindow {
       batchFavBtn.setOnAction(e -> batchFavorite());
 
       SVGPath trashIcon = new SVGPath();
-      trashIcon.setContent("M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z" +
-              "M19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z");
+      trashIcon.setContent("M9 4v1H5v2h14V5h-4V4H9z" +
+              "M6 7v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6z" +
+              "M10 9v10h2V9h-2zM14 9v10h2V9h-2z");
       trashIcon.setFill(Color.TRANSPARENT);
       trashIcon.setStroke(Color.web("#1d1d1f"));
       trashIcon.setStrokeWidth(1.2);
