@@ -10,6 +10,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -659,28 +661,48 @@ public class PhotoViewer {
        StackPane.setAlignment(topBar, Pos.TOP_LEFT);
        StackPane.setMargin(topBar, new Insets(0, 0, 0, 0));
 
-       // Bottom edit toolbar
+       // Sub-panel area (above toolbar)
+       HBox subPanel = new HBox();
+       subPanel.setAlignment(Pos.CENTER);
+       subPanel.setSpacing(10);
+       subPanel.setPadding(new Insets(10, 16, 10, 16));
+       subPanel.setStyle("-fx-background-color: rgba(0,0,0,0.75);");
+       subPanel.setId("editSubPanel");
+       rootLayout.getChildren().add(subPanel);
+       StackPane.setAlignment(subPanel, Pos.BOTTOM_CENTER);
+       StackPane.setMargin(subPanel, new Insets(0, 0, 80, 0));
+
+       // Bottom segmented bar
        HBox bar = new HBox();
        bar.setAlignment(Pos.CENTER);
-       bar.setSpacing(12);
+       bar.setSpacing(0);
        bar.setPadding(new Insets(0, 16, 30, 16));
-       bar.setStyle("-fx-background-color: linear-gradient(to top, rgba(0,0,0,0.7), transparent);");
-       bar.setMinHeight(80);
-       bar.setMaxHeight(80);
+       bar.setStyle("-fx-background-color: rgba(0,0,0,0.85);");
+       bar.setMinHeight(60);
+       bar.setMaxHeight(60);
        bar.setId("editToolbar");
 
-       bar.getChildren().addAll(
-               makeCapsuleBtn("Crop", this::showCropPanel),
-               makeCapsuleBtn("Adjust", this::showAdjustPanel),
-               makeCapsuleBtn("Filter", this::showFilterPanel)
-       );
+       javafx.scene.control.ToggleGroup group = new javafx.scene.control.ToggleGroup();
+
+       javafx.scene.control.ToggleButton cropTb = makeSegBtn("Crop", group);
+       javafx.scene.control.ToggleButton adjTb = makeSegBtn("Adjust", group);
+       javafx.scene.control.ToggleButton filtTb = makeSegBtn("Filter", group);
+
+       cropTb.setOnAction(e -> hideEditSubPanel());
+       adjTb.setOnAction(e -> showAdjustSubPanel());
+       filtTb.setOnAction(e -> showFilterSubPanel());
+       adjTb.setSelected(true);
+       showAdjustSubPanel();
+
+       bar.getChildren().addAll(cropTb, adjTb, filtTb);
 
        Region doneSpacer = new Region();
        HBox.setHgrow(doneSpacer, Priority.ALWAYS);
        Button doneBtn = new Button("Done");
        doneBtn.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 13));
        doneBtn.setTextFill(Color.WHITE);
-       doneBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 6 12 6 12;");
+       doneBtn.setStyle("-fx-background-color: #007AFF; -fx-background-radius: 14; " +
+               "-fx-cursor: hand; -fx-padding: 6 16 6 16;");
        doneBtn.setOnAction(e -> { hideEditToolbar(); hideEditOverlay(); });
        bar.getChildren().addAll(doneSpacer, doneBtn);
 
@@ -689,14 +711,80 @@ public class PhotoViewer {
        rootLayout.setBottom(bar);
    }
 
-   private Button makeCapsuleBtn(String text, Runnable action) {
-       Button btn = new Button(text);
-       btn.setFont(Font.font("Microsoft YaHei", 12));
+   private javafx.scene.control.ToggleButton makeSegBtn(String text,
+           javafx.scene.control.ToggleGroup group) {
+       javafx.scene.control.ToggleButton btn = new javafx.scene.control.ToggleButton(text);
+       btn.setFont(Font.font("Microsoft YaHei", 13));
        btn.setTextFill(Color.WHITE);
-       btn.setStyle("-fx-background-color: rgba(58,58,60,0.85); -fx-background-radius: 16; " +
-               "-fx-cursor: hand; -fx-padding: 8 20 8 20;");
-       btn.setOnAction(e -> action.run());
+       btn.setToggleGroup(group);
+       btn.setStyle("-fx-background-color: rgba(58,58,60,0.6); -fx-background-radius: 0; " +
+               "-fx-cursor: hand; -fx-padding: 10 18 10 18; -fx-border-color: rgba(255,255,255,0.15); " +
+               "-fx-border-width: 0 0.5 0 0.5;");
+       btn.selectedProperty().addListener((o, ov, nv) -> {
+           if (nv) btn.setStyle("-fx-background-color: rgba(58,58,60,1); -fx-background-radius: 0; " +
+               "-fx-cursor: hand; -fx-padding: 10 18 10 18; -fx-border-color: rgba(255,255,255,0.15); " +
+               "-fx-border-width: 0 0.5 0 0.5;");
+           else btn.setStyle("-fx-background-color: rgba(58,58,60,0.6); -fx-background-radius: 0; " +
+               "-fx-cursor: hand; -fx-padding: 10 18 10 18; -fx-border-color: rgba(255,255,255,0.15); " +
+               "-fx-border-width: 0 0.5 0 0.5;");
+       });
        return btn;
+   }
+
+   private void hideEditSubPanel() {
+       rootLayout.getChildren().removeIf(n -> "editSubPanel".equals(n.getId()));
+   }
+
+   private void showAdjustSubPanel() {
+       hideEditSubPanel();
+       HBox panel = new HBox(10);
+       panel.setAlignment(Pos.CENTER);
+       panel.setPadding(new Insets(8, 16, 8, 16));
+       panel.setStyle("-fx-background-color: rgba(0,0,0,0.75);");
+       panel.setId("editSubPanel");
+
+       Label label = new Label("Brightness");
+       label.setFont(Font.font("Microsoft YaHei", 11));
+       label.setTextFill(Color.web("#cccccc"));
+
+       Slider slider = new Slider(-1, 1, 0);
+       slider.setPrefWidth(180);
+       slider.valueProperty().addListener((o, ov, nv) -> imageView.setOpacity(1 + nv.doubleValue() * 0.5));
+
+       Button resetBtn = new Button("Reset");
+       resetBtn.setFont(Font.font("Microsoft YaHei", 11));
+       resetBtn.setTextFill(Color.web("#007AFF"));
+       resetBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
+       resetBtn.setOnAction(e -> { slider.setValue(0); imageView.setOpacity(1); });
+
+       panel.getChildren().addAll(label, slider, resetBtn);
+       rootLayout.getChildren().add(panel);
+       StackPane.setAlignment(panel, Pos.BOTTOM_CENTER);
+       StackPane.setMargin(panel, new Insets(0, 0, 60, 0));
+   }
+
+   private void showFilterSubPanel() {
+       hideEditSubPanel();
+       HBox panel = new HBox(10);
+       panel.setAlignment(Pos.CENTER);
+       panel.setPadding(new Insets(8, 16, 8, 16));
+       panel.setStyle("-fx-background-color: rgba(0,0,0,0.75);");
+       panel.setId("editSubPanel");
+
+       String[] filters = {"Original", "Mono", "Sepia", "Cool", "Warm"};
+       for (String f : filters) {
+           Button fb = new Button(f);
+           fb.setFont(Font.font("Microsoft YaHei", 11));
+           fb.setTextFill(Color.WHITE);
+           fb.setStyle("-fx-background-color: rgba(255,255,255,0.12); -fx-background-radius: 12; " +
+                   "-fx-cursor: hand; -fx-padding: 4 12 4 12;");
+           fb.setOnAction(e -> applyFilter(f.toLowerCase()));
+           panel.getChildren().add(fb);
+       }
+
+       rootLayout.getChildren().add(panel);
+       StackPane.setAlignment(panel, Pos.BOTTOM_CENTER);
+       StackPane.setMargin(panel, new Insets(0, 0, 60, 0));
    }
 
   private void hideEditToolbar() {
