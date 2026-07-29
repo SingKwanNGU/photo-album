@@ -112,7 +112,7 @@ public class MainWindow {
               "C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 " +
               "22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z");
       heartIcon.setFill(Color.TRANSPARENT);
-      heartIcon.setStroke(Color.web("#007AFF"));
+      heartIcon.setStroke(Color.web("#1d1d1f"));
       heartIcon.setStrokeWidth(1.2);
 
       Button batchFavBtn = new Button();
@@ -124,7 +124,7 @@ public class MainWindow {
       trashIcon.setContent("M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z" +
               "M19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z");
       trashIcon.setFill(Color.TRANSPARENT);
-      trashIcon.setStroke(Color.web("#FF3B30"));
+      trashIcon.setStroke(Color.web("#1d1d1f"));
       trashIcon.setStrokeWidth(1.2);
 
       Button batchDelBtn = new Button();
@@ -134,7 +134,7 @@ public class MainWindow {
 
       SVGPath playIcon = new SVGPath();
       playIcon.setContent("M8 5v14l11-7z");
-      playIcon.setFill(Color.web("#007AFF"));
+      playIcon.setFill(Color.web("#1d1d1f"));
 
       Button batchSlideBtn = new Button();
       batchSlideBtn.setGraphic(playIcon);

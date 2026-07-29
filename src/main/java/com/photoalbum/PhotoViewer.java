@@ -183,15 +183,11 @@ public class PhotoViewer {
                "C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 " +
                "22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z");
        heartPath.setFill(Color.TRANSPARENT);
-       heartPath.setStroke(Color.WHITE);
+       heartPath.setStroke(Color.web("#1d1d1f"));
        heartPath.setStrokeWidth(1.2);
 
-       StackPane heartIcon = new StackPane(heartPath);
-       heartIcon.setMinSize(26, 26);
-       heartIcon.setMaxSize(26, 26);
-
        favoriteBtn = new Button();
-       favoriteBtn.setGraphic(heartIcon);
+       favoriteBtn.setGraphic(wrapCircleIcon(heartPath));
        favoriteBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 8;");
        favoriteBtn.setOnAction(e -> toggleFavorite());
        return favoriteBtn;
@@ -202,34 +198,49 @@ public class PhotoViewer {
        trash.setContent("M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z" +
                "M19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z");
        trash.setFill(Color.TRANSPARENT);
-       trash.setStroke(Color.WHITE);
+       trash.setStroke(Color.web("#1d1d1f"));
        trash.setStrokeWidth(1.2);
-       return makeIconBtn(trash, this::showDeleteConfirm);
+       return makeCircleBtn(trash, this::showDeleteConfirm);
    }
 
    private Button createInfoBtn() {
        Circle circle = new Circle(10.5);
        circle.setFill(Color.TRANSPARENT);
-       circle.setStroke(Color.WHITE);
+       circle.setStroke(Color.web("#1d1d1f"));
        circle.setStrokeWidth(1.2);
 
        Label iLabel = new Label("i");
        iLabel.setFont(Font.font("Serif", FontWeight.BOLD, 13));
-       iLabel.setTextFill(Color.WHITE);
+       iLabel.setTextFill(Color.web("#1d1d1f"));
 
        StackPane icon = new StackPane(circle, iLabel);
        icon.setMinSize(24, 24);
        icon.setMaxSize(24, 24);
 
-       return makeIconBtn(icon, this::showInfo);
+       return makeCircleBtn(icon, this::showInfo);
    }
 
-   private Button makeIconBtn(javafx.scene.Node icon, Runnable action) {
+   private Button makeCircleBtn(javafx.scene.Node icon, Runnable action) {
+       Circle bg = new Circle(15);
+       bg.setFill(Color.web("#3a3a3c"));
+       StackPane circleIcon = new StackPane(bg, icon);
+       circleIcon.setMinSize(30, 30);
+       circleIcon.setMaxSize(30, 30);
+
        Button btn = new Button();
-       btn.setGraphic(icon);
+       btn.setGraphic(circleIcon);
        btn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 8;");
        btn.setOnAction(e -> action.run());
        return btn;
+   }
+
+   private StackPane wrapCircleIcon(javafx.scene.Node icon) {
+       Circle bg = new Circle(15);
+       bg.setFill(Color.web("#3a3a3c"));
+       StackPane circleIcon = new StackPane(bg, icon);
+       circleIcon.setMinSize(30, 30);
+       circleIcon.setMaxSize(30, 30);
+       return circleIcon;
    }
 
    private void setupGestures() {
@@ -466,16 +477,16 @@ public class PhotoViewer {
   private void toggleFavorite() {
       if (currentPhoto != null) {
           currentPhoto.setFavorite(!currentPhoto.isFavorite());
-          heartPath.setFill(currentPhoto.isFavorite() ? Color.WHITE : Color.TRANSPARENT);
+          heartPath.setFill(currentPhoto.isFavorite() ? Color.web("#1d1d1f") : Color.TRANSPARENT);
           mainWindow.setStatus(currentPhoto.isFavorite() ? "Favorited" : "Unfavorited");
       }
   }
 
-  private void syncFavoriteIcon() {
-      if (currentPhoto != null && heartPath != null) {
-          heartPath.setFill(currentPhoto.isFavorite() ? Color.WHITE : Color.TRANSPARENT);
-      }
-  }
+ private void syncFavoriteIcon() {
+     if (currentPhoto != null && heartPath != null) {
+         heartPath.setFill(currentPhoto.isFavorite() ? Color.web("#1d1d1f") : Color.TRANSPARENT);
+     }
+ }
 
    private void showDeleteConfirm() {
        if (currentPhoto == null) return;
