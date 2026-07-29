@@ -802,9 +802,14 @@ public class PhotoViewer {
        rootLayout.getChildren().removeIf(n -> "editOverlay".equals(n.getId()));
    }
 
-   private void startSingleSlideshow() {
+  private void startSingleSlideshow() {
        List<Photo> slides = new java.util.ArrayList<>(photoList);
-       startSlideshow(slides);
+       if (slides.isEmpty()) return;
+       // Start from current photo
+       List<Photo> reordered = new java.util.ArrayList<>();
+       reordered.addAll(slides.subList(currentIndex, slides.size()));
+       reordered.addAll(slides.subList(0, currentIndex));
+       startSlideshow(reordered);
    }
 
    private void showCropPanel() {
