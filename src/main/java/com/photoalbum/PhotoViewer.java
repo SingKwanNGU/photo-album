@@ -16,6 +16,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -34,11 +37,12 @@ public class PhotoViewer {
 
     private final MainWindow mainWindow;
 
-    private final StackPane root;
-    private final StackPane imageContainer;
-    private final ImageView imageView;
-    private final VBox topOverlay;
-    private final HBox bottomOverlay;
+   private final StackPane root;
+   private final BorderPane rootLayout;
+   private final HBox navBar;
+   private final StackPane imageContainer;
+   private final ImageView imageView;
+   private final HBox bottomOverlay;
   private Label photoNameLabel;
   private Label photoDateLabel;
   private Label timeLabel;
@@ -104,19 +108,22 @@ public class PhotoViewer {
        imageView.fitWidthProperty().bind(imageContainer.widthProperty());
        imageView.fitHeightProperty().bind(imageContainer.heightProperty());
 
-       topOverlay = createTopOverlay();
-        bottomOverlay = createBottomOverlay();
+       navBar = createNavBar();
+       bottomOverlay = createBottomOverlay();
 
-        root = new StackPane(imageContainer, topOverlay, bottomOverlay);
-        root.setStyle("-fx-background-color: black;");
+       rootLayout = new BorderPane();
+       rootLayout.setTop(navBar);
+       rootLayout.setCenter(imageContainer);
+       rootLayout.setBottom(bottomOverlay);
+       rootLayout.setStyle("-fx-background-color: black;");
 
-        StackPane.setAlignment(topOverlay, Pos.TOP_LEFT);
-        StackPane.setAlignment(bottomOverlay, Pos.BOTTOM_CENTER);
+       root = new StackPane(rootLayout);
+       root.setStyle("-fx-background-color: black;");
 
-        setupGestures();
-    }
+       setupGestures();
+   }
 
-  private VBox createTopOverlay() {
+  private HBox createNavBar() {
        Circle backCircle = new Circle(15);
        backCircle.setFill(Color.web("#3a3a3c"));
 
@@ -133,40 +140,28 @@ public class PhotoViewer {
        backBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;");
        backBtn.setOnAction(e -> close());
 
-       // Date pill: two-line capsule
        photoDateLabel = new Label("");
-      photoDateLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 15));
-      photoDateLabel.setTextFill(Color.WHITE);
+       photoDateLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 15));
+       photoDateLabel.setTextFill(Color.WHITE);
 
-      timeLabel = new Label("");
-      timeLabel.setFont(Font.font("Microsoft YaHei", 11));
-      timeLabel.setTextFill(Color.web("#cccccc"));
+       timeLabel = new Label("");
+       timeLabel.setFont(Font.font("Microsoft YaHei", 11));
+       timeLabel.setTextFill(Color.web("#cccccc"));
 
        VBox datePill = new VBox(1, photoDateLabel, timeLabel);
        datePill.setAlignment(Pos.CENTER);
        datePill.setStyle("-fx-background-color: rgba(58,58,60,0.85); " +
                "-fx-background-radius: 16; -fx-padding: 6 18 6 18;");
 
-       HBox dateRow = new HBox(datePill);
-       dateRow.setAlignment(Pos.CENTER);
-       dateRow.setPadding(new Insets(6, 0, 0, 0));
+       Region spacer = new Region();
+       HBox.setHgrow(spacer, Priority.ALWAYS);
 
-       // Back button pinned top-left
-       HBox backRow = new HBox(backBtn);
-       backRow.setPadding(new Insets(8, 12, 0, 12));
-       backRow.setAlignment(Pos.CENTER_LEFT);
-
-       // Stack: back button left, date pill center
-       StackPane topPane = new StackPane();
-       topPane.getChildren().addAll(dateRow, backRow);
-       StackPane.setAlignment(backRow, Pos.TOP_LEFT);
-       StackPane.setAlignment(dateRow, Pos.TOP_CENTER);
-
-       VBox top = new VBox(0, topPane);
-       top.setStyle("-fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);");
-       top.setMinHeight(120);
-       top.setMaxHeight(120);
-       return top;
+       HBox bar = new HBox(backBtn, spacer, datePill);
+       bar.setAlignment(Pos.CENTER);
+       bar.setPadding(new Insets(8, 12, 8, 8));
+       bar.setStyle("-fx-background-color: rgba(0,0,0,0.85);");
+       bar.setMinHeight(48);
+       return bar;
    }
 
    private HBox createBottomOverlay() {
@@ -383,9 +378,9 @@ public class PhotoViewer {
        overlayVisible = !overlayVisible;
        double targetOpacity = overlayVisible ? 1.0 : 0.0;
 
-       FadeTransition t1 = new FadeTransition(Duration.millis(250), topOverlay);
-       t1.setToValue(targetOpacity);
-       t1.play();
+       FadeTransition ft = new FadeTransition(Duration.millis(250), bottomOverlay);
+       ft.setToValue(targetOpacity);
+       ft.play();
    }
 
     private void navigateTo(int index) {
@@ -433,7 +428,6 @@ public class PhotoViewer {
 
        stopSlideshow();
        overlayVisible = true;
-       topOverlay.setOpacity(1);
        bottomOverlay.setOpacity(1);
 
        loadCurrentPhoto();
@@ -447,7 +441,6 @@ public class PhotoViewer {
        this.slideshowMode = true;
 
        overlayVisible = true;
-       topOverlay.setOpacity(1);
        bottomOverlay.setOpacity(0);
        hideDeleteConfirm();
        loadCurrentPhoto();
