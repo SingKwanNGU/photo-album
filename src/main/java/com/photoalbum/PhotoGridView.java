@@ -157,6 +157,17 @@ public class PhotoGridView {
           StackPane.setMargin(checkmark, new Insets(0, 5, 5, 0));
       }
 
+      // Favorite heart overlay
+      if (photo.isFavorite()) {
+          Label heart = new Label("\u2665");
+          heart.setFont(Font.font(size * 0.18));
+          heart.setTextFill(Color.WHITE);
+          heart.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 2, 0, 0, 1);");
+          cell.getChildren().add(heart);
+          StackPane.setAlignment(heart, Pos.BOTTOM_LEFT);
+          StackPane.setMargin(heart, new Insets(0, 0, 4, 5));
+      }
+
       // Hover effect
       cell.setOnMouseEntered(e -> cell.setOpacity(0.85));
       cell.setOnMouseExited(e -> cell.setOpacity(1.0));
