@@ -639,9 +639,9 @@ public class PhotoViewer {
        slideBtn.setOnAction(e -> { hideEditOverlay(); startSingleSlideshow(); });
 
        menu.getChildren().addAll(slideBtn);
-       rootLayout.getChildren().add(menu);
+       root.getChildren().add(menu);
        StackPane.setAlignment(menu, Pos.TOP_RIGHT);
-       StackPane.setMargin(menu, new Insets(54, 10, 0, 0));
+       StackPane.setMargin(menu, new Insets(8, 10, 0, 0));
    }
 
   private void showEditOverlay() {
@@ -798,7 +798,8 @@ public class PhotoViewer {
        bottomOverlay.setManaged(true);
    }
 
-   private void hideEditOverlay() {
+  private void hideEditOverlay() {
+       root.getChildren().removeIf(n -> "editOverlay".equals(n.getId()));
        rootLayout.getChildren().removeIf(n -> "editOverlay".equals(n.getId()));
    }
 
