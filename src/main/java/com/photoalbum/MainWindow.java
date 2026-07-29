@@ -240,15 +240,21 @@ public class MainWindow {
         root.setStyle("-fx-background-color: black;");
     }
 
-    void closeViewer() {
-        contentArea.getChildren().clear();
-        root.getBottom().setVisible(true);
-        root.getTop().setVisible(true);
-        root.setStyle("-fx-background-color: #f2f2f7;");
+   void closeViewer() {
+       contentArea.getChildren().clear();
+       root.getBottom().setVisible(true);
+       root.getTop().setVisible(true);
+       root.setStyle("-fx-background-color: #f2f2f7;");
 
-        switchTab(currentTab);
-        statusLabel.setText(PhotoService.getInstance().getStatusMessage());
-    }
+       if (currentTab == 0) {
+           contentArea.getChildren().add(photoGridView.getView());
+           photoGridView.refresh();
+       } else {
+           contentArea.getChildren().add(albumListView.getView());
+           albumListView.refresh();
+       }
+       statusLabel.setText(PhotoService.getInstance().getStatusMessage());
+   }
 
     void setStatus(String msg) {
         statusLabel.setText(msg);
