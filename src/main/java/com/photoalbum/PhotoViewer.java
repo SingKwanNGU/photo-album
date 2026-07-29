@@ -204,9 +204,10 @@ public class PhotoViewer {
        outline.setStroke(Color.WHITE);
        outline.setStrokeWidth(1.2);
 
-       SVGPath lines = new SVGPath();
-       lines.setContent("M10 9v10h3V9zM14 9v10h3V9z");
-       lines.setFill(Color.WHITE);
+      SVGPath lines = new SVGPath();
+      lines.setContent("M11.5 9v10M15.5 9v10");
+      lines.setStroke(Color.WHITE);
+      lines.setStrokeWidth(0.8);
 
        StackPane trashIcon = new StackPane(outline, lines);
        trashIcon.setMinSize(24, 24);
