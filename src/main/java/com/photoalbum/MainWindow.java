@@ -53,20 +53,6 @@ public class MainWindow {
         this.albumListView = new AlbumListView(this);
        this.photoViewer = new PhotoViewer(this);
 
-       // iOS-style status bar
-       HBox statusBar = new HBox();
-       statusBar.setPadding(new Insets(8, 20, 2, 20));
-       statusBar.setStyle("-fx-background-color: rgba(248,248,248,0.92);");
-       statusBar.setMinHeight(28);
-
-       Label clockLabel = new Label("9:41");
-       clockLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 12));
-       clockLabel.setTextFill(Color.web("#1d1d1f"));
-
-       Region sPad = new Region();
-       HBox.setHgrow(sPad, Priority.ALWAYS);
-       statusBar.getChildren().addAll(sPad, clockLabel);
-
        // Top bar
         HBox topBar = new HBox();
         topBar.setAlignment(Pos.CENTER_LEFT);
@@ -164,9 +150,7 @@ public class MainWindow {
 
         // Root
        BorderPane mainPane = new BorderPane();
-       VBox topSection = new VBox(0, statusBar, topBar);
-       topSection.setStyle("-fx-background-color: rgba(248,248,248,0.92);");
-       mainPane.setTop(topSection);
+       mainPane.setTop(topBar);
        mainPane.setCenter(contentArea);
        mainPane.setBottom(new VBox(0, batchBar, statusLabel, tabBar));
        mainPane.setStyle("-fx-background-color: #f2f2f7;");
