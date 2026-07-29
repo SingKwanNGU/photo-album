@@ -38,8 +38,8 @@ public class PhotoGridView {
         this.mainWindow = mainWindow;
 
         grid = new FlowPane(SPACING, SPACING);
-        grid.setPadding(new Insets(0));
-        grid.setStyle("-fx-background-color: #f2f2f7;");
+       grid.setPadding(new Insets(2, 0, 0, 0));
+       grid.setStyle("-fx-background-color: #f2f2f7;");
 
         emptyLabel = new Label("没有照片\n点击下方选择文件夹开始");
         emptyLabel.setFont(Font.font("Microsoft YaHei", 15));
