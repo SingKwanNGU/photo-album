@@ -124,27 +124,34 @@ public class PhotoViewer {
        backBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;");
        backBtn.setOnAction(e -> close());
 
+       // Date pill: iOS-style rounded capsule at top center
+       photoDateLabel = new Label("");
+       photoDateLabel.setFont(Font.font("Microsoft YaHei", 12));
+       photoDateLabel.setTextFill(Color.WHITE);
+       photoDateLabel.setStyle("-fx-background-color: rgba(58,58,60,0.85); " +
+               "-fx-background-radius: 14; -fx-padding: 4 14 4 14;");
+
+       HBox dateRow = new HBox(photoDateLabel);
+       dateRow.setAlignment(Pos.CENTER);
+       dateRow.setPadding(new Insets(6, 0, 0, 0));
+
+       // Back button pinned top-left
        HBox backRow = new HBox(backBtn);
        backRow.setPadding(new Insets(8, 12, 0, 12));
        backRow.setAlignment(Pos.CENTER_LEFT);
 
-       photoNameLabel = new Label("");
-       photoNameLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 16));
-       photoNameLabel.setTextFill(Color.WHITE);
+       // Stack: back button left, date pill center
+       StackPane topPane = new StackPane();
+       topPane.getChildren().addAll(dateRow, backRow);
+       StackPane.setAlignment(backRow, Pos.TOP_LEFT);
+       StackPane.setAlignment(dateRow, Pos.TOP_CENTER);
 
-       photoDateLabel = new Label("");
-       photoDateLabel.setFont(Font.font("Microsoft YaHei", 12));
-       photoDateLabel.setTextFill(Color.web("#cccccc"));
-
-       VBox infoBox = new VBox(2, photoNameLabel, photoDateLabel);
-       infoBox.setPadding(new Insets(6, 14, 0, 14));
-
-       VBox top = new VBox(0, backRow, infoBox);
+       VBox top = new VBox(0, topPane);
        top.setStyle("-fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);");
        top.setMinHeight(120);
        top.setMaxHeight(120);
        return top;
-    }
+   }
 
    private HBox createBottomOverlay() {
        HBox bar = new HBox();
@@ -386,12 +393,11 @@ public class PhotoViewer {
         root.setCursor(Cursor.DEFAULT);
     }
 
-    private void updateInfo() {
-        photoNameLabel.setText(currentPhoto.getName());
-        photoDateLabel.setText(currentPhoto.getDateString() + "  " +
-                currentPhoto.getTimeString() + "  " +
-                currentPhoto.getFormattedSize());
-    }
+   private void updateInfo() {
+       photoDateLabel.setText(currentPhoto.getDateString() + "  " +
+               currentPhoto.getTimeString() + "  " +
+               currentPhoto.getFormattedSize());
+   }
 
     public StackPane getView() {
         return root;
