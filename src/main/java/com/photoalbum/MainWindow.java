@@ -351,7 +351,8 @@ public class MainWindow {
 
        dialog.getChildren().addAll(warning, btnRow);
        contentArea.getChildren().add(dialog);
-       StackPane.setAlignment(dialog, Pos.CENTER);
+       StackPane.setAlignment(dialog, Pos.BOTTOM_CENTER);
+       StackPane.setMargin(dialog, new Insets(0, 0, 60, 0));
    }
 
    private void hideConfirmDialog() {

@@ -569,7 +569,8 @@ public class PhotoViewer {
 
        confirmVisible = true;
        rootLayout.getChildren().add(confirmOverlay);
-       StackPane.setAlignment(confirmOverlay, Pos.CENTER);
+       StackPane.setAlignment(confirmOverlay, Pos.BOTTOM_CENTER);
+       StackPane.setMargin(confirmOverlay, new Insets(0, 0, 60, 0));
    }
 
    private void hideDeleteConfirm() {
