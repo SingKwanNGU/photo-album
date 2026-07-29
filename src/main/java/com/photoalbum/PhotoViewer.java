@@ -101,27 +101,34 @@ public class PhotoViewer {
         setupGestures();
     }
 
-    private VBox createTopOverlay() {
-        Button backBtn = new Button("< Back");
-        backBtn.setFont(Font.font("Microsoft YaHei", FontWeight.NORMAL, 14));
-        backBtn.setTextFill(Color.WHITE);
-        backBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 4 8 4 8;");
-        backBtn.setOnAction(e -> close());
+   private VBox createTopOverlay() {
+       Button backBtn = new Button("\u2190");
+       backBtn.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 20));
+       backBtn.setTextFill(Color.WHITE);
+       backBtn.setStyle("-fx-background-color: rgba(0,0,0,0.4); -fx-background-radius: 20; " +
+               "-fx-cursor: hand; -fx-padding: 6 12 6 12; -fx-min-width: 44; -fx-min-height: 44;");
+       backBtn.setOnAction(e -> close());
 
-        photoNameLabel = new Label("");
-        photoNameLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 16));
-        photoNameLabel.setTextFill(Color.WHITE);
+       HBox backRow = new HBox(backBtn);
+       backRow.setPadding(new Insets(8, 12, 0, 12));
+       backRow.setAlignment(Pos.CENTER_LEFT);
 
-        photoDateLabel = new Label("");
-        photoDateLabel.setFont(Font.font("Microsoft YaHei", 12));
-        photoDateLabel.setTextFill(Color.web("#cccccc"));
+       photoNameLabel = new Label("");
+       photoNameLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 16));
+       photoNameLabel.setTextFill(Color.WHITE);
 
-        VBox top = new VBox(2, backBtn, photoNameLabel, photoDateLabel);
-        top.setPadding(new Insets(40, 14, 0, 14));
-        top.setStyle("-fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);");
-        top.setMinHeight(120);
-        top.setMaxHeight(120);
-        return top;
+       photoDateLabel = new Label("");
+       photoDateLabel.setFont(Font.font("Microsoft YaHei", 12));
+       photoDateLabel.setTextFill(Color.web("#cccccc"));
+
+       VBox infoBox = new VBox(2, photoNameLabel, photoDateLabel);
+       infoBox.setPadding(new Insets(6, 14, 0, 14));
+
+       VBox top = new VBox(0, backRow, infoBox);
+       top.setStyle("-fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);");
+       top.setMinHeight(120);
+       top.setMaxHeight(120);
+       return top;
     }
 
     private HBox createBottomOverlay() {
