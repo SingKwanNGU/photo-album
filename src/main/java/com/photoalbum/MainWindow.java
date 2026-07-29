@@ -169,15 +169,15 @@ public class MainWindow {
 
         root = mainPane;
 
-        Scene scene = new Scene(root, 420, 780);
-        scene.getStylesheets().add(
-                getClass().getResource("/com/photoalbum/style.css").toExternalForm()
-        );
+       Scene scene = new Scene(root, 390, 844);
+       scene.getStylesheets().add(
+               getClass().getResource("/com/photoalbum/style.css").toExternalForm()
+       );
 
-        stage.setTitle("Photo Album");
-        stage.setScene(scene);
-        stage.setMinWidth(360);
-        stage.setMinHeight(600);
+       stage.setTitle("Photo Album");
+       stage.setScene(scene);
+       stage.setMinWidth(320);
+       stage.setMinHeight(568);
 
         scanPhotos();
     }

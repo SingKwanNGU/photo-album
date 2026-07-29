@@ -383,14 +383,14 @@ public class PhotoViewer {
         loadCurrentPhoto();
     }
 
-    private void loadCurrentPhoto() {
-        Image img = PhotoService.getInstance().loadFullImage(currentPhoto.getPath());
-        imageView.setImage(img);
+   private void loadCurrentPhoto() {
+       Image img = PhotoService.getInstance().loadFullImage(currentPhoto.getPath());
+       imageView.setImage(img);
 
-        double winW = root.getWidth() > 0 ? root.getWidth() : 400;
-        double winH = root.getHeight() > 0 ? root.getHeight() : 700;
-        imageView.setFitWidth(winW);
-        imageView.setFitHeight(winH);
+       double winW = mainWindow.getStage().getScene().getWidth();
+       double winH = mainWindow.getStage().getScene().getHeight();
+       imageView.setFitWidth(winW);
+       imageView.setFitHeight(winH);
 
        resetZoom();
        resetImagePosition();
