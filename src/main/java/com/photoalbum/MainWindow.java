@@ -283,6 +283,7 @@ public class MainWindow {
         if (selectMode) {
             selectBtn.setText("Cancel");
             chooseFolderBtn.setVisible(false);
+            chooseFolderBtn.setManaged(false);
             photoGridView.enterSelectMode();
             batchBar.setVisible(true);
             batchBar.setManaged(true);
@@ -290,6 +291,7 @@ public class MainWindow {
         } else {
             selectBtn.setText("Select");
             chooseFolderBtn.setVisible(true);
+            chooseFolderBtn.setManaged(true);
             photoGridView.exitSelectMode();
             batchBar.setVisible(false);
             batchBar.setManaged(false);
