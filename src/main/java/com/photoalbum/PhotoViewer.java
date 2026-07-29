@@ -606,55 +606,120 @@ public class PhotoViewer {
        alert.showAndWait();
    }
 
-   private void showMenu() {
-       // Placeholder for future menu actions
-       mainWindow.setStatus("Menu: share, copy, more options...");
-   }
-
-   private void showEditOverlay() {
+  private void showMenu() {
        hideDeleteConfirm();
-       VBox overlay = new VBox(10);
-       overlay.setAlignment(Pos.CENTER);
-       overlay.setPadding(new Insets(20));
-       overlay.setStyle("-fx-background-color: rgba(0,0,0,0.92); -fx-background-radius: 16;");
-       overlay.setMaxWidth(300);
-       overlay.setId("editOverlay");
+       VBox menu = new VBox(6);
+       menu.setAlignment(Pos.CENTER);
+       menu.setPadding(new Insets(14, 20, 14, 20));
+       menu.setStyle("-fx-background-color: rgba(44,44,46,0.95); -fx-background-radius: 14;");
+       menu.setMaxWidth(200);
+       menu.setId("editOverlay");
 
-       Label title = new Label("Edit Photo");
-       title.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 18));
-       title.setTextFill(Color.WHITE);
+       SVGPath playIcon = new SVGPath();
+       playIcon.setContent("M8 5v14l11-7z");
+       playIcon.setFill(Color.WHITE);
+       StackPane playPane = new StackPane(playIcon);
+       playPane.setMinSize(20, 20);
+       playPane.setMaxSize(20, 20);
 
-       Button cropBtn = makeEditOptionBtn("Crop", () -> {});
-       Button adjustBtn = makeEditOptionBtn("Adjust", () -> showAdjustPanel());
-       Button filterBtn = makeEditOptionBtn("Filter", () -> showFilterPanel());
+       Button slideBtn = new Button("Slideshow", playPane);
+       slideBtn.setFont(Font.font("Microsoft YaHei", 14));
+       slideBtn.setTextFill(Color.WHITE);
+       slideBtn.setContentDisplay(javafx.scene.control.ContentDisplay.LEFT);
+       slideBtn.setGraphicTextGap(10);
+       slideBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 8 16 8 16;");
+       slideBtn.setMaxWidth(Double.MAX_VALUE);
+       slideBtn.setOnAction(e -> { hideEditOverlay(); startSingleSlideshow(); });
 
-       Button closeBtn = new Button("Close");
-       closeBtn.setFont(Font.font("Microsoft YaHei", 14));
-       closeBtn.setTextFill(Color.web("#007AFF"));
-       closeBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
-       closeBtn.setOnAction(e -> hideEditOverlay());
-
-       overlay.getChildren().addAll(title, cropBtn, adjustBtn, filterBtn, closeBtn);
-       rootLayout.getChildren().add(overlay);
-       StackPane.setAlignment(overlay, Pos.CENTER);
+       menu.getChildren().addAll(slideBtn);
+       rootLayout.getChildren().add(menu);
+       StackPane.setAlignment(menu, Pos.TOP_RIGHT);
+       StackPane.setMargin(menu, new Insets(54, 10, 0, 0));
    }
 
-   private Button makeEditOptionBtn(String text, Runnable action) {
+  private void showEditOverlay() {
+       hideDeleteConfirm();
+       showEditToolbar();
+   }
+
+  private void showEditToolbar() {
+       hideEditToolbar();
+
+       // Top cancel bar
+       HBox topBar = new HBox();
+       topBar.setPadding(new Insets(8, 14, 0, 14));
+       topBar.setId("editTopBar");
+       Button cancelBtn = new Button("Cancel");
+       cancelBtn.setFont(Font.font("Microsoft YaHei", FontWeight.NORMAL, 14));
+       cancelBtn.setTextFill(Color.WHITE);
+       cancelBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;");
+       cancelBtn.setOnAction(e -> { hideEditToolbar(); hideEditOverlay(); });
+       topBar.getChildren().add(cancelBtn);
+       rootLayout.getChildren().add(topBar);
+       StackPane.setAlignment(topBar, Pos.TOP_LEFT);
+       StackPane.setMargin(topBar, new Insets(0, 0, 0, 0));
+
+       // Bottom edit toolbar
+       HBox bar = new HBox();
+       bar.setAlignment(Pos.CENTER);
+       bar.setSpacing(12);
+       bar.setPadding(new Insets(0, 16, 30, 16));
+       bar.setStyle("-fx-background-color: linear-gradient(to top, rgba(0,0,0,0.7), transparent);");
+       bar.setMinHeight(80);
+       bar.setMaxHeight(80);
+       bar.setId("editToolbar");
+
+       bar.getChildren().addAll(
+               makeCapsuleBtn("Crop", this::showCropPanel),
+               makeCapsuleBtn("Adjust", this::showAdjustPanel),
+               makeCapsuleBtn("Filter", this::showFilterPanel)
+       );
+
+       Region doneSpacer = new Region();
+       HBox.setHgrow(doneSpacer, Priority.ALWAYS);
+       Button doneBtn = new Button("Done");
+       doneBtn.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 13));
+       doneBtn.setTextFill(Color.WHITE);
+       doneBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 6 12 6 12;");
+       doneBtn.setOnAction(e -> { hideEditToolbar(); hideEditOverlay(); });
+       bar.getChildren().addAll(doneSpacer, doneBtn);
+
+       bottomOverlay.setVisible(false);
+       bottomOverlay.setManaged(false);
+       rootLayout.setBottom(bar);
+   }
+
+   private Button makeCapsuleBtn(String text, Runnable action) {
        Button btn = new Button(text);
-       btn.setFont(Font.font("Microsoft YaHei", 14));
+       btn.setFont(Font.font("Microsoft YaHei", 12));
        btn.setTextFill(Color.WHITE);
-       btn.setStyle("-fx-background-color: rgba(255,255,255,0.12); -fx-background-radius: 10; " +
-               "-fx-cursor: hand; -fx-padding: 10 20 10 20; -fx-min-width: 200;");
+       btn.setStyle("-fx-background-color: rgba(58,58,60,0.85); -fx-background-radius: 16; " +
+               "-fx-cursor: hand; -fx-padding: 8 20 8 20;");
        btn.setOnAction(e -> action.run());
        return btn;
+   }
+
+  private void hideEditToolbar() {
+       rootLayout.getChildren().removeIf(n -> "editToolbar".equals(n.getId()));
+       rootLayout.getChildren().removeIf(n -> "editTopBar".equals(n.getId()));
+       bottomOverlay.setVisible(true);
+       bottomOverlay.setManaged(true);
    }
 
    private void hideEditOverlay() {
        rootLayout.getChildren().removeIf(n -> "editOverlay".equals(n.getId()));
    }
 
+   private void startSingleSlideshow() {
+       List<Photo> slides = new java.util.ArrayList<>(photoList);
+       startSlideshow(slides);
+   }
+
+   private void showCropPanel() {
+       mainWindow.setStatus("Crop: drag edges to crop (coming soon)");
+   }
+
    private void showAdjustPanel() {
-       hideEditOverlay();
        VBox panel = new VBox(8);
        panel.setAlignment(Pos.CENTER);
        panel.setPadding(new Insets(20));
@@ -675,7 +740,7 @@ public class PhotoViewer {
        backBtn.setFont(Font.font("Microsoft YaHei", 14));
        backBtn.setTextFill(Color.web("#007AFF"));
        backBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
-       backBtn.setOnAction(e -> { hideEditOverlay(); showEditOverlay(); });
+       backBtn.setOnAction(e -> { hideEditOverlay(); showEditToolbar(); });
 
        Button resetBtn = new Button("Reset");
        resetBtn.setFont(Font.font("Microsoft YaHei", 14));
@@ -719,7 +784,7 @@ public class PhotoViewer {
        backBtn.setFont(Font.font("Microsoft YaHei", 14));
        backBtn.setTextFill(Color.web("#007AFF"));
        backBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
-       backBtn.setOnAction(e -> { hideEditOverlay(); showEditOverlay(); });
+       backBtn.setOnAction(e -> { hideEditOverlay(); showEditToolbar(); });
 
        panel.getChildren().add(backBtn);
        rootLayout.getChildren().add(panel);
