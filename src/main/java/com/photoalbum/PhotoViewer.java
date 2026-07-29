@@ -1,6 +1,8 @@
 package com.photoalbum;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -25,6 +27,7 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PhotoViewer {
@@ -42,6 +45,8 @@ public class PhotoViewer {
    private Button favoriteBtn;
    private SVGPath heartPath;
    private boolean confirmVisible = false;
+   private Timeline slideshowTimer;
+   private boolean slideshowMode = false;
 
    private List<Photo> photoList;
     private int currentIndex;
@@ -228,11 +233,12 @@ public class PhotoViewer {
    }
 
    private void setupGestures() {
-        root.setOnMouseClicked(e -> {
-            if (!isDragging && e.getClickCount() == 1) {
-                toggleOverlay();
-            }
-        });
+       root.setOnMouseClicked(e -> {
+           if (!isDragging && e.getClickCount() == 1) {
+               if (slideshowMode) { stopSlideshow(); return; }
+               toggleOverlay();
+           }
+       });
 
         root.setOnMousePressed(this::onMousePressed);
         root.setOnMouseDragged(this::onMouseDragged);
@@ -403,17 +409,55 @@ public class PhotoViewer {
         return root;
     }
 
-    public void show(Photo photo, List<Photo> photoList) {
-        this.photoList = photoList;
-        this.currentIndex = photoList.indexOf(photo);
-        this.currentPhoto = photo;
+   public void show(Photo photo, List<Photo> photoList) {
+       this.photoList = photoList;
+       this.currentIndex = photoList.indexOf(photo);
+       this.currentPhoto = photo;
 
-        overlayVisible = true;
-        topOverlay.setOpacity(1);
-        bottomOverlay.setOpacity(1);
+       stopSlideshow();
+       overlayVisible = true;
+       topOverlay.setOpacity(1);
+       bottomOverlay.setOpacity(1);
 
-        loadCurrentPhoto();
-    }
+       loadCurrentPhoto();
+   }
+
+   public void startSlideshow(List<Photo> slides) {
+       if (slides.isEmpty()) return;
+       this.photoList = new ArrayList<>(slides);
+       this.currentIndex = 0;
+       this.currentPhoto = photoList.get(0);
+       this.slideshowMode = true;
+
+       overlayVisible = true;
+       topOverlay.setOpacity(1);
+       bottomOverlay.setOpacity(0);
+       hideDeleteConfirm();
+       loadCurrentPhoto();
+
+       stopSlideshow();
+       slideshowTimer = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
+           currentIndex++;
+           if (currentIndex >= photoList.size()) {
+               stopSlideshow();
+               close();
+               return;
+           }
+           currentPhoto = photoList.get(currentIndex);
+           loadCurrentPhoto();
+       }));
+       slideshowTimer.setCycleCount(Timeline.INDEFINITE);
+       slideshowTimer.play();
+   }
+
+   private void stopSlideshow() {
+       if (slideshowTimer != null) {
+           slideshowTimer.stop();
+           slideshowTimer = null;
+       }
+       slideshowMode = false;
+       bottomOverlay.setOpacity(1);
+   }
 
     private void close() {
         mainWindow.closeViewer();

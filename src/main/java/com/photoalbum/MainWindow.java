@@ -132,7 +132,16 @@ public class MainWindow {
       batchDelBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 6;");
       batchDelBtn.setOnAction(e -> batchDelete());
 
-       batchBar.getChildren().addAll(batchLabel, batchFavBtn, batchDelBtn);
+      SVGPath playIcon = new SVGPath();
+      playIcon.setContent("M8 5v14l11-7z");
+      playIcon.setFill(Color.web("#007AFF"));
+
+      Button batchSlideBtn = new Button();
+      batchSlideBtn.setGraphic(playIcon);
+      batchSlideBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 6;");
+      batchSlideBtn.setOnAction(e -> startSlideshow());
+
+       batchBar.getChildren().addAll(batchLabel, batchFavBtn, batchDelBtn, batchSlideBtn);
 
        // Tab bar
        HBox tabBar = createTabBar();
@@ -302,16 +311,29 @@ public class MainWindow {
         setStatus("Favorited " + selected.size() + " photos");
     }
 
-    private void batchDelete() {
-        Set<Photo> selected = photoGridView.getSelectedPhotos();
-        if (selected.isEmpty()) return;
-        PhotoService service = PhotoService.getInstance();
-        for (Photo p : selected) service.deletePhoto(p);
-        toggleSelectMode();
-        scanPhotos();
-        setStatus("Deleted " + selected.size() + " photos");
-    }
+   private void batchDelete() {
+       Set<Photo> selected = photoGridView.getSelectedPhotos();
+       if (selected.isEmpty()) return;
+       PhotoService service = PhotoService.getInstance();
+       for (Photo p : selected) service.deletePhoto(p);
+       toggleSelectMode();
+       scanPhotos();
+       setStatus("Deleted " + selected.size() + " photos");
+   }
 
-    boolean isSelectMode() { return selectMode; }
+   private void startSlideshow() {
+       Set<Photo> selected = photoGridView.getSelectedPhotos();
+       if (selected.isEmpty()) return;
+       List<Photo> slides = new java.util.ArrayList<>(selected);
+       toggleSelectMode();
+       photoViewer.startSlideshow(slides);
+       contentArea.getChildren().clear();
+       contentArea.getChildren().add(photoViewer.getView());
+       root.getBottom().setVisible(false);
+       root.getTop().setVisible(false);
+       root.setStyle("-fx-background-color: black;");
+   }
+
+   boolean isSelectMode() { return selectMode; }
 
 }
