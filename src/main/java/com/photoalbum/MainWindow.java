@@ -308,7 +308,57 @@ public class MainWindow {
         setStatus("Favorited " + selected.size() + " photos");
     }
 
-   private void batchDelete() {
+  private void batchDelete() {
+       Set<Photo> selected = photoGridView.getSelectedPhotos();
+       if (selected.isEmpty()) return;
+       showConfirmDialog();
+   }
+
+   private void showConfirmDialog() {
+       VBox dialog = new VBox(8);
+       dialog.setAlignment(Pos.CENTER);
+       dialog.setPadding(new Insets(12, 14, 12, 14));
+       dialog.setStyle("-fx-background-color: rgba(255,255,255,0.96); -fx-background-radius: 14; " +
+               "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 0, 4);");
+       dialog.setMaxWidth(100);
+       dialog.setMaxHeight(100);
+       dialog.setId("confirmDialog");
+
+       Label warning = new Label("Please confirm delete?");
+       warning.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 11));
+       warning.setTextFill(Color.web("#1d1d1f"));
+       warning.setWrapText(true);
+       warning.setAlignment(Pos.CENTER);
+       warning.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+
+       Button yesBtn = new Button("Delete");
+       yesBtn.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 10));
+       yesBtn.setTextFill(Color.WHITE);
+       yesBtn.setStyle("-fx-background-color: #FF3B30; -fx-background-radius: 12; " +
+               "-fx-cursor: hand; -fx-padding: 4 12 4 12;");
+       yesBtn.setOnAction(e -> { hideConfirmDialog(); executeBatchDelete(); });
+
+       Button noBtn = new Button("Cancel");
+       noBtn.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 10));
+       noBtn.setTextFill(Color.web("#1d1d1f"));
+       noBtn.setStyle("-fx-background-color: transparent; -fx-border-color: #1d1d1f; " +
+               "-fx-border-radius: 12; -fx-background-radius: 12; " +
+               "-fx-cursor: hand; -fx-padding: 4 12 4 12;");
+       noBtn.setOnAction(e -> hideConfirmDialog());
+
+       HBox btnRow = new HBox(10, yesBtn, noBtn);
+       btnRow.setAlignment(Pos.CENTER);
+
+       dialog.getChildren().addAll(warning, btnRow);
+       contentArea.getChildren().add(dialog);
+       StackPane.setAlignment(dialog, Pos.CENTER);
+   }
+
+   private void hideConfirmDialog() {
+       contentArea.getChildren().removeIf(n -> "confirmDialog".equals(n.getId()));
+   }
+
+   private void executeBatchDelete() {
        Set<Photo> selected = photoGridView.getSelectedPhotos();
        if (selected.isEmpty()) return;
        PhotoService service = PhotoService.getInstance();
