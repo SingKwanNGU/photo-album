@@ -617,11 +617,10 @@ public class PhotoViewer {
 
   private void showMenu() {
        hideDeleteConfirm();
-       VBox menu = new VBox(4);
+       VBox menu = new VBox(0);
        menu.setAlignment(Pos.CENTER);
-       menu.setPadding(new Insets(8, 12, 8, 12));
+       menu.setPadding(new Insets(4, 6, 4, 6));
        menu.setStyle("-fx-background-color: rgba(44,44,46,0.95); -fx-background-radius: 14;");
-       menu.setMaxWidth(160);
        menu.setId("editOverlay");
 
        SVGPath playIcon = new SVGPath();
@@ -636,7 +635,7 @@ public class PhotoViewer {
        slideBtn.setTextFill(Color.WHITE);
        slideBtn.setContentDisplay(javafx.scene.control.ContentDisplay.LEFT);
        slideBtn.setGraphicTextGap(8);
-       slideBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 6 10 6 10;");
+       slideBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 5 10 5 10;");
        slideBtn.setMaxWidth(Double.MAX_VALUE);
        slideBtn.setOnAction(e -> { hideEditOverlay(); startSingleSlideshow(); });
 
