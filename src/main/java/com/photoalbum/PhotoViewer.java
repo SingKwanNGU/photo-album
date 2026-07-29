@@ -17,6 +17,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Scale;
@@ -38,6 +40,7 @@ public class PhotoViewer {
    private Label photoDateLabel;
 
    private Button favoriteBtn;
+   private SVGPath heartPath;
    private boolean confirmVisible = false;
 
    private List<Photo> photoList;
@@ -134,40 +137,78 @@ public class PhotoViewer {
        return top;
     }
 
-    private HBox createBottomOverlay() {
-        HBox bar = new HBox();
-        bar.setAlignment(Pos.CENTER);
-        bar.setSpacing(24);
-        bar.setPadding(new Insets(0, 16, 30, 16));
-        bar.setStyle("-fx-background-color: linear-gradient(to top, rgba(0,0,0,0.7), transparent);");
-        bar.setMinHeight(80);
-        bar.setMaxHeight(80);
+   private HBox createBottomOverlay() {
+       HBox bar = new HBox();
+       bar.setAlignment(Pos.CENTER);
+       bar.setSpacing(28);
+       bar.setPadding(new Insets(0, 16, 30, 16));
+       bar.setStyle("-fx-background-color: linear-gradient(to top, rgba(0,0,0,0.7), transparent);");
+       bar.setMinHeight(80);
+       bar.setMaxHeight(80);
 
        bar.getChildren().addAll(
                createFavoriteBtn(),
-               createActionBtn("\u2716", this::showDeleteConfirm),
-               createActionBtn("\u2139", this::showInfo)
+               createTrashBtn(),
+               createInfoBtn()
        );
 
-        return bar;
-    }
-
-   private Button createActionBtn(String icon, Runnable action) {
-       Button btn = new Button(icon);
-       btn.setFont(Font.font(16));
-       btn.setTextFill(Color.WHITE);
-       btn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 8;");
-       btn.setOnAction(e -> action.run());
-       return btn;
+       return bar;
    }
 
    private Button createFavoriteBtn() {
-       favoriteBtn = new Button("\u2661");
-       favoriteBtn.setFont(Font.font(20));
-       favoriteBtn.setTextFill(Color.WHITE);
+       heartPath = new SVGPath();
+       heartPath.setContent("M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 " +
+               "2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09 " +
+               "C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 " +
+               "22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z");
+       heartPath.setFill(Color.TRANSPARENT);
+       heartPath.setStroke(Color.WHITE);
+       heartPath.setStrokeWidth(1.2);
+
+       StackPane heartIcon = new StackPane(heartPath);
+       heartIcon.setMinSize(26, 26);
+       heartIcon.setMaxSize(26, 26);
+
+       favoriteBtn = new Button();
+       favoriteBtn.setGraphic(heartIcon);
        favoriteBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 8;");
        favoriteBtn.setOnAction(e -> toggleFavorite());
        return favoriteBtn;
+   }
+
+   private Button createTrashBtn() {
+       SVGPath trash = new SVGPath();
+       trash.setContent("M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z" +
+               "M19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z");
+       trash.setFill(Color.TRANSPARENT);
+       trash.setStroke(Color.WHITE);
+       trash.setStrokeWidth(1.2);
+       return makeIconBtn(trash, this::showDeleteConfirm);
+   }
+
+   private Button createInfoBtn() {
+       Circle circle = new Circle(10.5);
+       circle.setFill(Color.TRANSPARENT);
+       circle.setStroke(Color.WHITE);
+       circle.setStrokeWidth(1.2);
+
+       Label iLabel = new Label("i");
+       iLabel.setFont(Font.font("Serif", FontWeight.BOLD, 13));
+       iLabel.setTextFill(Color.WHITE);
+
+       StackPane icon = new StackPane(circle, iLabel);
+       icon.setMinSize(24, 24);
+       icon.setMaxSize(24, 24);
+
+       return makeIconBtn(icon, this::showInfo);
+   }
+
+   private Button makeIconBtn(javafx.scene.Node icon, Runnable action) {
+       Button btn = new Button();
+       btn.setGraphic(icon);
+       btn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 8;");
+       btn.setOnAction(e -> action.run());
+       return btn;
    }
 
    private void setupGestures() {
@@ -362,14 +403,13 @@ public class PhotoViewer {
         mainWindow.closeViewer();
     }
 
-   private void toggleFavorite() {
-       if (currentPhoto != null) {
-           currentPhoto.setFavorite(!currentPhoto.isFavorite());
-           favoriteBtn.setText(currentPhoto.isFavorite() ? "\u2764" : "\u2661");
-           favoriteBtn.setTextFill(currentPhoto.isFavorite() ? Color.web("#FF3B30") : Color.WHITE);
-           mainWindow.setStatus(currentPhoto.isFavorite() ? "Favorited" : "Unfavorited");
-       }
-   }
+  private void toggleFavorite() {
+      if (currentPhoto != null) {
+          currentPhoto.setFavorite(!currentPhoto.isFavorite());
+          heartPath.setFill(currentPhoto.isFavorite() ? Color.WHITE : Color.TRANSPARENT);
+          mainWindow.setStatus(currentPhoto.isFavorite() ? "Favorited" : "Unfavorited");
+      }
+  }
 
    private void showDeleteConfirm() {
        if (currentPhoto == null) return;
