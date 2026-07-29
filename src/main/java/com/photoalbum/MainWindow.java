@@ -120,13 +120,20 @@ public class MainWindow {
       batchFavBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 6;");
       batchFavBtn.setOnAction(e -> batchFavorite());
 
-      SVGPath trashIcon = new SVGPath();
-      trashIcon.setContent("M9 4v1H5v2h14V5h-4V4H9z" +
-              "M6 7v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6z" +
-              "M10 9v10h2V9h-2zM14 9v10h2V9h-2z");
-      trashIcon.setFill(Color.TRANSPARENT);
-      trashIcon.setStroke(Color.web("#1d1d1f"));
-      trashIcon.setStrokeWidth(1.2);
+      SVGPath outline = new SVGPath();
+      outline.setContent("M9 4v1H5v2h14V5h-4V4H9z" +
+              "M6 7v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6z");
+      outline.setFill(Color.TRANSPARENT);
+      outline.setStroke(Color.web("#1d1d1f"));
+      outline.setStrokeWidth(1.2);
+
+      SVGPath lines = new SVGPath();
+      lines.setContent("M10 9v10h3V9zM14 9v10h3V9z");
+      lines.setFill(Color.web("#1d1d1f"));
+
+      StackPane trashIcon = new StackPane(outline, lines);
+      trashIcon.setMinSize(24, 24);
+      trashIcon.setMaxSize(24, 24);
 
       Button batchDelBtn = new Button();
       batchDelBtn.setGraphic(trashIcon);

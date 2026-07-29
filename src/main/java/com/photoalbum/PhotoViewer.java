@@ -197,14 +197,21 @@ public class PhotoViewer {
    }
 
    private Button createTrashBtn() {
-       SVGPath trash = new SVGPath();
-       trash.setContent("M9 4v1H5v2h14V5h-4V4H9z" +
-               "M6 7v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6z" +
-               "M10 9v10h2V9h-2zM14 9v10h2V9h-2z");
-       trash.setFill(Color.TRANSPARENT);
-       trash.setStroke(Color.WHITE);
-       trash.setStrokeWidth(1.2);
-       return makeIconBtn(trash, this::showDeleteConfirm);
+       SVGPath outline = new SVGPath();
+       outline.setContent("M9 4v1H5v2h14V5h-4V4H9z" +
+               "M6 7v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6z");
+       outline.setFill(Color.TRANSPARENT);
+       outline.setStroke(Color.WHITE);
+       outline.setStrokeWidth(1.2);
+
+       SVGPath lines = new SVGPath();
+       lines.setContent("M10 9v10h3V9zM14 9v10h3V9z");
+       lines.setFill(Color.WHITE);
+
+       StackPane trashIcon = new StackPane(outline, lines);
+       trashIcon.setMinSize(24, 24);
+       trashIcon.setMaxSize(24, 24);
+       return makeIconBtn(trashIcon, this::showDeleteConfirm);
    }
 
    private Button createInfoBtn() {
