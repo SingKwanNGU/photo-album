@@ -34,10 +34,13 @@ public class PhotoViewer {
     private final ImageView imageView;
     private final VBox topOverlay;
     private final HBox bottomOverlay;
-    private Label photoNameLabel;
-    private Label photoDateLabel;
+   private Label photoNameLabel;
+   private Label photoDateLabel;
 
-    private List<Photo> photoList;
+   private Button favoriteBtn;
+   private boolean confirmVisible = false;
+
+   private List<Photo> photoList;
     private int currentIndex;
     private Photo currentPhoto;
 
@@ -140,25 +143,34 @@ public class PhotoViewer {
         bar.setMinHeight(80);
         bar.setMaxHeight(80);
 
-        bar.getChildren().addAll(
-                createActionBtn("\u2606", this::toggleFavorite),
-                createActionBtn("\u2716", this::deleteCurrent),
-                createActionBtn("\u2139", this::showInfo)
-        );
+       bar.getChildren().addAll(
+               createFavoriteBtn(),
+               createActionBtn("\u2716", this::showDeleteConfirm),
+               createActionBtn("\u2139", this::showInfo)
+       );
 
         return bar;
     }
 
-    private Button createActionBtn(String icon, Runnable action) {
-        Button btn = new Button(icon);
-        btn.setFont(Font.font(16));
-        btn.setTextFill(Color.WHITE);
-        btn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 8;");
-        btn.setOnAction(e -> action.run());
-        return btn;
-    }
+   private Button createActionBtn(String icon, Runnable action) {
+       Button btn = new Button(icon);
+       btn.setFont(Font.font(16));
+       btn.setTextFill(Color.WHITE);
+       btn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 8;");
+       btn.setOnAction(e -> action.run());
+       return btn;
+   }
 
-    private void setupGestures() {
+   private Button createFavoriteBtn() {
+       favoriteBtn = new Button("\u2661");
+       favoriteBtn.setFont(Font.font(20));
+       favoriteBtn.setTextFill(Color.WHITE);
+       favoriteBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 8;");
+       favoriteBtn.setOnAction(e -> toggleFavorite());
+       return favoriteBtn;
+   }
+
+   private void setupGestures() {
         root.setOnMouseClicked(e -> {
             if (!isDragging && e.getClickCount() == 1) {
                 toggleOverlay();
@@ -354,33 +366,78 @@ public class PhotoViewer {
         mainWindow.closeViewer();
     }
 
-    private void toggleFavorite() {
-        if (currentPhoto != null) {
-            currentPhoto.setFavorite(!currentPhoto.isFavorite());
-            mainWindow.setStatus(currentPhoto.isFavorite() ? "Favorited" : "Unfavorited");
-        }
-    }
+   private void toggleFavorite() {
+       if (currentPhoto != null) {
+           currentPhoto.setFavorite(!currentPhoto.isFavorite());
+           favoriteBtn.setText(currentPhoto.isFavorite() ? "\u2764" : "\u2661");
+           favoriteBtn.setTextFill(currentPhoto.isFavorite() ? Color.web("#FF3B30") : Color.WHITE);
+           mainWindow.setStatus(currentPhoto.isFavorite() ? "Favorited" : "Unfavorited");
+       }
+   }
 
-    private void deleteCurrent() {
-        if (currentPhoto == null) return;
+   private void showDeleteConfirm() {
+       if (currentPhoto == null) return;
+       hideDeleteConfirm();
 
-        PhotoService.getInstance().deletePhoto(currentPhoto);
-        photoList.remove(currentPhoto);
+       Label warning = new Label("Delete this photo?");
+       warning.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 14));
+       warning.setTextFill(Color.WHITE);
 
-        if (photoList.isEmpty()) {
-            close();
-        } else if (currentIndex >= photoList.size()) {
-            currentIndex = photoList.size() - 1;
-            currentPhoto = photoList.get(currentIndex);
-            loadCurrentPhoto();
-        } else {
-            currentPhoto = photoList.get(currentIndex);
-            loadCurrentPhoto();
-        }
+       Button yesBtn = new Button("Delete");
+       yesBtn.setFont(Font.font("Microsoft YaHei", 12));
+       yesBtn.setTextFill(Color.WHITE);
+       yesBtn.setStyle("-fx-background-color: #FF3B30; -fx-background-radius: 14; " +
+               "-fx-cursor: hand; -fx-padding: 6 16 6 16;");
+       yesBtn.setOnAction(e -> { hideDeleteConfirm(); deleteCurrent(); });
 
-        mainWindow.refreshCurrentTab();
-        mainWindow.setStatus("Deleted");
-    }
+       Button noBtn = new Button("Cancel");
+       noBtn.setFont(Font.font("Microsoft YaHei", 12));
+       noBtn.setTextFill(Color.web("#007AFF"));
+       noBtn.setStyle("-fx-background-color: rgba(255,255,255,0.15); -fx-background-radius: 14; " +
+               "-fx-cursor: hand; -fx-padding: 6 16 6 16;");
+       noBtn.setOnAction(e -> hideDeleteConfirm());
+
+       HBox confirmBox = new HBox(10, yesBtn, noBtn);
+       confirmBox.setAlignment(Pos.CENTER);
+
+       VBox confirmOverlay = new VBox(8, warning, confirmBox);
+       confirmOverlay.setAlignment(Pos.CENTER);
+       confirmOverlay.setPadding(new Insets(14, 20, 14, 20));
+       confirmOverlay.setStyle("-fx-background-color: rgba(200,0,0,0.92); -fx-background-radius: 14;");
+       confirmOverlay.setMaxWidth(260);
+       confirmOverlay.setId("confirmOverlay");
+
+       confirmVisible = true;
+       root.getChildren().add(confirmOverlay);
+       StackPane.setAlignment(confirmOverlay, Pos.BOTTOM_RIGHT);
+       StackPane.setMargin(confirmOverlay, new Insets(0, 16, 90, 0));
+   }
+
+   private void hideDeleteConfirm() {
+       confirmVisible = false;
+       root.getChildren().removeIf(node -> "confirmOverlay".equals(node.getId()));
+   }
+
+   private void deleteCurrent() {
+       if (currentPhoto == null) return;
+
+       PhotoService.getInstance().deletePhoto(currentPhoto);
+       photoList.remove(currentPhoto);
+
+       if (photoList.isEmpty()) {
+           close();
+       } else if (currentIndex >= photoList.size()) {
+           currentIndex = photoList.size() - 1;
+           currentPhoto = photoList.get(currentIndex);
+           loadCurrentPhoto();
+       } else {
+           currentPhoto = photoList.get(currentIndex);
+           loadCurrentPhoto();
+       }
+
+       mainWindow.refreshCurrentTab();
+       mainWindow.setStatus("Deleted");
+   }
 
     private void showInfo() {
         if (currentPhoto == null) return;

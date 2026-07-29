@@ -92,23 +92,38 @@ public class PhotoService {
         });
     }
 
-    public Image getThumbnail(Photo photo, int size) {
-        Path key = photo.getPath();
-        Image cached = thumbnailCache.get(key);
-        if (cached != null) return cached;
-        executor.submit(() -> {
-            try {
-                BufferedImage buf = loadAndCropSquare(photo.getPath(), size);
-                if (buf != null) {
-                    Image img = SwingFXUtils.toFXImage(buf, null);
-                    thumbnailCache.put(key, img);
-                }
-            } catch (Exception ignored) {}
-        });
-        return null;
-    }
+   public Image getThumbnail(Photo photo, int size) {
+       Path key = photo.getPath();
+       Image cached = thumbnailCache.get(key);
+       if (cached != null) return cached;
+       executor.submit(() -> {
+           try {
+               BufferedImage buf = loadAndCropSquare(photo.getPath(), size);
+               if (buf != null) {
+                   Image img = SwingFXUtils.toFXImage(buf, null);
+                   thumbnailCache.put(key, img);
+               }
+           } catch (Exception ignored) {}
+       });
+       return null;
+   }
 
-    public Image loadFullImage(Path path) {
+   public Image getThumbnailSync(Photo photo, int size) {
+       Path key = photo.getPath();
+       Image cached = thumbnailCache.get(key);
+       if (cached != null) return cached;
+       try {
+           BufferedImage buf = loadAndCropSquare(photo.getPath(), size);
+           if (buf != null) {
+               Image img = SwingFXUtils.toFXImage(buf, null);
+               thumbnailCache.put(key, img);
+               return img;
+           }
+       } catch (Exception ignored) {}
+       return null;
+   }
+
+   public Image loadFullImage(Path path) {
         try { return new Image(path.toUri().toString(), true); }
         catch (Exception e) { return null; }
     }

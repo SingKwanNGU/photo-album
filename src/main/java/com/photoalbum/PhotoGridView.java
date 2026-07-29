@@ -83,51 +83,41 @@ public class PhotoGridView {
         double size = cellSize;
         for (int i = 0; i < photos.size(); i++) {
             Photo photo = photos.get(i);
-            StackPane cell = createPhotoCell(photo, size, i, photos);
-            grid.getChildren().add(cell);
-        }
+           StackPane cell = createPhotoCell(photo, size, i, photos);
+           grid.getChildren().add(cell);
+       }
 
-        // Deferred thumbnail loading
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.schedule(() -> {
-            PhotoService service = PhotoService.getInstance();
-            int thumbSize = (int) size * 2;
-            for (Photo p : photos) {
-                service.getThumbnail(p, thumbSize);
-            }
-        }, 0, TimeUnit.MILLISECONDS);
-        scheduler.shutdown();
-    }
+   }
 
-    private StackPane createPhotoCell(Photo photo, double size, int index, List<Photo> allPhotos) {
-        StackPane cell = new StackPane();
-        cell.setMinSize(size, size);
-        cell.setMaxSize(size, size);
-        cell.setPrefSize(size, size);
-        cell.setStyle("-fx-background-color: #e0e0e0; -fx-cursor: hand;");
+   private StackPane createPhotoCell(Photo photo, double size, int index, List<Photo> allPhotos) {
+       StackPane cell = new StackPane();
+       cell.setMinSize(size, size);
+       cell.setMaxSize(size, size);
+       cell.setPrefSize(size, size);
+       cell.setStyle("-fx-background-color: #e0e0e0; -fx-cursor: hand;");
 
-        // Clip to rounded rectangle
-        Rectangle clip = new Rectangle(size, size);
-        clip.setArcWidth(4);
-        clip.setArcHeight(4);
-        cell.setClip(clip);
+       // Clip to rounded rectangle
+       Rectangle clip = new Rectangle(size, size);
+       clip.setArcWidth(4);
+       clip.setArcHeight(4);
+       cell.setClip(clip);
 
-        // Placeholder / actual thumbnail
-        ImageView imageView = new ImageView();
-        imageView.setFitWidth(size);
-        imageView.setFitHeight(size);
-        imageView.setPreserveRatio(false);
-        imageView.setSmooth(true);
-        imageView.setStyle("-fx-background-color: #d0d0d0;");
+       // Placeholder / actual thumbnail
+       ImageView imageView = new ImageView();
+       imageView.setFitWidth(size);
+       imageView.setFitHeight(size);
+       imageView.setPreserveRatio(false);
+       imageView.setSmooth(true);
+       imageView.setStyle("-fx-background-color: #d0d0d0;");
 
-        cell.getChildren().add(imageView);
+       cell.getChildren().add(imageView);
 
-        // Load thumbnail asynchronously
-        PhotoService service = PhotoService.getInstance();
-        Image thumb = service.getThumbnail(photo, (int) size * 2);
-        if (thumb != null) {
-            imageView.setImage(thumb);
-        }
+       // Load thumbnail synchronously for immediate display
+       PhotoService service = PhotoService.getInstance();
+       Image thumb = service.getThumbnailSync(photo, (int) size * 2);
+       if (thumb != null) {
+           imageView.setImage(thumb);
+       }
 
         // Click to open viewer
         cell.setOnMouseClicked(e -> {
