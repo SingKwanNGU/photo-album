@@ -107,12 +107,21 @@ public class PhotoViewer {
         setupGestures();
     }
 
-   private VBox createTopOverlay() {
-       Button backBtn = new Button("\u2190");
-       backBtn.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 20));
-       backBtn.setTextFill(Color.WHITE);
-       backBtn.setStyle("-fx-background-color: rgba(0,0,0,0.4); -fx-background-radius: 20; " +
-               "-fx-cursor: hand; -fx-padding: 6 12 6 12; -fx-min-width: 44; -fx-min-height: 44;");
+  private VBox createTopOverlay() {
+       Circle backCircle = new Circle(15);
+       backCircle.setFill(Color.web("#3a3a3c"));
+
+       Label backArrow = new Label("<");
+       backArrow.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 18));
+       backArrow.setTextFill(Color.WHITE);
+
+       StackPane backIcon = new StackPane(backCircle, backArrow);
+       backIcon.setMinSize(32, 32);
+       backIcon.setMaxSize(32, 32);
+
+       Button backBtn = new Button();
+       backBtn.setGraphic(backIcon);
+       backBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;");
        backBtn.setOnAction(e -> close());
 
        HBox backRow = new HBox(backBtn);
