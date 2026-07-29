@@ -156,7 +156,25 @@ public class PhotoGridView {
           cell.getChildren().add(checkmark);
           StackPane.setAlignment(checkmark, Pos.BOTTOM_RIGHT);
           StackPane.setMargin(checkmark, new Insets(0, 5, 5, 0));
-     }
+      }
+
+      // Favorite heart overlay
+      if (photo.isFavorite()) {
+          SVGPath heart = new SVGPath();
+          heart.setContent("M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 " +
+                  "2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09 " +
+                  "C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 " +
+                  "22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z");
+          double hSize = size * 0.2;
+          heart.setScaleX(hSize / 24);
+          heart.setScaleY(hSize / 24);
+          heart.setFill(Color.WHITE);
+          heart.setStroke(Color.WHITE);
+          heart.setStrokeWidth(0.5);
+          cell.getChildren().add(heart);
+          StackPane.setAlignment(heart, Pos.BOTTOM_LEFT);
+          StackPane.setMargin(heart, new Insets(0, 0, 4, 5));
+      }
 
       // Hover effect
       cell.setOnMouseEntered(e -> cell.setOpacity(0.85));
