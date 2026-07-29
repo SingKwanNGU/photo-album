@@ -694,7 +694,10 @@ public class PhotoViewer {
        adjTb.setSelected(true);
        showAdjustSubPanel();
 
-       bar.getChildren().addAll(cropTb, adjTb, filtTb);
+       HBox segCapsule = new HBox(0, cropTb, adjTb, filtTb);
+       segCapsule.setStyle("-fx-background-color: rgba(58,58,60,0.85); -fx-background-radius: 16;");
+       segCapsule.setAlignment(Pos.CENTER);
+       bar.getChildren().add(segCapsule);
 
        Region doneSpacer = new Region();
        HBox.setHgrow(doneSpacer, Priority.ALWAYS);
@@ -711,25 +714,21 @@ public class PhotoViewer {
        rootLayout.setBottom(bar);
    }
 
-   private javafx.scene.control.ToggleButton makeSegBtn(String text,
-           javafx.scene.control.ToggleGroup group) {
-       javafx.scene.control.ToggleButton btn = new javafx.scene.control.ToggleButton(text);
-       btn.setFont(Font.font("Microsoft YaHei", 13));
-       btn.setTextFill(Color.WHITE);
-       btn.setToggleGroup(group);
-       btn.setStyle("-fx-background-color: rgba(58,58,60,0.6); -fx-background-radius: 0; " +
-               "-fx-cursor: hand; -fx-padding: 10 18 10 18; -fx-border-color: rgba(255,255,255,0.15); " +
-               "-fx-border-width: 0 0.5 0 0.5;");
-       btn.selectedProperty().addListener((o, ov, nv) -> {
-           if (nv) btn.setStyle("-fx-background-color: rgba(58,58,60,1); -fx-background-radius: 0; " +
-               "-fx-cursor: hand; -fx-padding: 10 18 10 18; -fx-border-color: rgba(255,255,255,0.15); " +
-               "-fx-border-width: 0 0.5 0 0.5;");
-           else btn.setStyle("-fx-background-color: rgba(58,58,60,0.6); -fx-background-radius: 0; " +
-               "-fx-cursor: hand; -fx-padding: 10 18 10 18; -fx-border-color: rgba(255,255,255,0.15); " +
-               "-fx-border-width: 0 0.5 0 0.5;");
-       });
-       return btn;
-   }
+  private javafx.scene.control.ToggleButton makeSegBtn(String text,
+          javafx.scene.control.ToggleGroup group) {
+      javafx.scene.control.ToggleButton btn = new javafx.scene.control.ToggleButton(text);
+      btn.setFont(Font.font("Microsoft YaHei", 12));
+      btn.setTextFill(Color.WHITE);
+      btn.setToggleGroup(group);
+      String base = "-fx-background-color: rgba(58,58,60,0.85); " +
+              "-fx-cursor: hand; -fx-padding: 6 16 6 16; -fx-border-color: transparent; ";
+      btn.setStyle(base);
+      btn.selectedProperty().addListener((o, ov, nv) -> {
+          if (nv) btn.setStyle(base + "-fx-background-color: rgba(58,58,60,1);");
+          else btn.setStyle(base);
+      });
+      return btn;
+  }
 
    private void hideEditSubPanel() {
        rootLayout.getChildren().removeIf(n -> "editSubPanel".equals(n.getId()));
