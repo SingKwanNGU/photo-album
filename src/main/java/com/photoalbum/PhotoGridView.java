@@ -13,7 +13,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -25,10 +27,13 @@ public class PhotoGridView {
     private final FlowPane grid;
     private final Label emptyLabel;
 
-    private static final double SPACING = 2;
-    private double cellSize = 120;
+   private static final double SPACING = 2;
+   private double cellSize = 120;
 
-    public PhotoGridView(MainWindow mainWindow) {
+   private boolean selectMode = false;
+   private final Set<Photo> selectedPhotos = new HashSet<>();
+
+   public PhotoGridView(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
 
         grid = new FlowPane(SPACING, SPACING);
@@ -65,11 +70,25 @@ public class PhotoGridView {
         return scrollPane;
     }
 
-    public void refresh() {
-        refreshGrid();
-    }
+   public void refresh() {
+       refreshGrid();
+   }
 
-    private void refreshGrid() {
+   public void enterSelectMode() {
+       selectMode = true;
+       selectedPhotos.clear();
+       refreshGrid();
+   }
+
+   public void exitSelectMode() {
+       selectMode = false;
+       selectedPhotos.clear();
+       refreshGrid();
+   }
+
+   public Set<Photo> getSelectedPhotos() { return selectedPhotos; }
+
+   private void refreshGrid() {
         List<Photo> photos = PhotoService.getInstance().getPhotos();
         grid.getChildren().clear();
 
@@ -119,17 +138,63 @@ public class PhotoGridView {
            imageView.setImage(thumb);
        }
 
-        // Click to open viewer
-        cell.setOnMouseClicked(e -> {
-            if (e.getClickCount() == 1) {
-                mainWindow.openViewer(photo, allPhotos);
-            }
-        });
+      // Click to open viewer
+      cell.setOnMouseClicked(e -> {
+          if (e.getClickCount() == 1) {
+              if (selectMode) {
+                  toggleSelection(photo, cell);
+                  return;
+              }
+              mainWindow.openViewer(photo, allPhotos);
+          }
+      });
 
-        // Hover effect
-        cell.setOnMouseEntered(e -> cell.setOpacity(0.85));
-        cell.setOnMouseExited(e -> cell.setOpacity(1.0));
+      // Selection checkmark overlay
+      if (selectMode) {
+          StackPane checkmark = createCheckmark(size, selectedPhotos.contains(photo));
+          cell.getChildren().add(checkmark);
+          StackPane.setAlignment(checkmark, Pos.BOTTOM_RIGHT);
+          StackPane.setMargin(checkmark, new Insets(0, 5, 5, 0));
+      }
 
-        return cell;
-    }
+      // Hover effect
+      cell.setOnMouseEntered(e -> cell.setOpacity(0.85));
+      cell.setOnMouseExited(e -> cell.setOpacity(1.0));
+
+      return cell;
+  }
+
+  private void toggleSelection(Photo photo, StackPane cell) {
+      if (selectedPhotos.contains(photo)) {
+          selectedPhotos.remove(photo);
+      } else {
+          selectedPhotos.add(photo);
+      }
+      int index = PhotoService.getInstance().getPhotos().indexOf(photo);
+      StackPane newCell = createPhotoCell(photo, cellSize, index,
+              PhotoService.getInstance().getPhotos());
+      int gridIndex = grid.getChildren().indexOf(cell);
+      if (gridIndex >= 0) {
+          grid.getChildren().set(gridIndex, newCell);
+      }
+      mainWindow.updateBatchCount(selectedPhotos.size());
+  }
+
+  private StackPane createCheckmark(double cellSize, boolean selected) {
+      double r = cellSize * 0.22;
+      StackPane circle = new StackPane();
+      circle.setMinSize(r, r);
+      circle.setMaxSize(r, r);
+      if (selected) {
+          circle.setStyle("-fx-background-color: #007AFF; -fx-background-radius: 50%;");
+          Label check = new Label("\u2713");
+          check.setFont(Font.font(10));
+          check.setTextFill(Color.WHITE);
+          circle.getChildren().add(check);
+      } else {
+          circle.setStyle("-fx-background-color: rgba(0,0,0,0.15); -fx-background-radius: 50%; " +
+                  "-fx-border-color: rgba(255,255,255,0.8); -fx-border-radius: 50%; -fx-border-width: 1.5;");
+      }
+      return circle;
+  }
 }

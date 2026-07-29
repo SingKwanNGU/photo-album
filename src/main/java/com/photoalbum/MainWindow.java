@@ -21,6 +21,8 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
 
 public class MainWindow {
@@ -32,11 +34,17 @@ public class MainWindow {
     private final PhotoViewer photoViewer;
     private final Label statusLabel;
     private final Label titleLabel;
-    private Button photosTabBtn;
-    private Button albumsTabBtn;
-    private final BorderPane root;
+   private Button photosTabBtn;
+   private Button albumsTabBtn;
+   private Button chooseFolderBtn;
+   private final BorderPane root;
 
-    private int currentTab = 0;
+   private HBox batchBar;
+   private Button selectBtn;
+   private Label batchLabel;
+   private boolean selectMode = false;
+
+   private int currentTab = 0;
 
     public MainWindow(Stage stage) {
         this.stage = stage;
@@ -58,17 +66,22 @@ public class MainWindow {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Button chooseFolderBtn = new Button("Select Folder");
-        chooseFolderBtn.setStyle(
+       chooseFolderBtn = new Button("Select Folder");
+       chooseFolderBtn.setStyle(
                 "-fx-background-color: #007AFF; -fx-text-fill: white; " +
                 "-fx-font-size: 13px; -fx-padding: 6 14 6 14; " +
                 "-fx-background-radius: 16; -fx-cursor: hand;"
         );
-        chooseFolderBtn.setOnAction(e -> chooseFolder());
+       chooseFolderBtn.setOnAction(e -> chooseFolder());
 
-        topBar.getChildren().addAll(titleLabel, spacer, chooseFolderBtn);
+       selectBtn = new Button("Select");
+       selectBtn.setStyle("-fx-text-fill: #007AFF; -fx-background-color: transparent; " +
+               "-fx-cursor: hand; -fx-font-size: 13px; -fx-padding: 6 8 6 8;");
+       selectBtn.setOnAction(e -> toggleSelectMode());
 
-        // Content
+       topBar.getChildren().addAll(titleLabel, spacer, selectBtn, chooseFolderBtn);
+
+       // Content
         contentArea = new StackPane();
         contentArea.getChildren().add(photoGridView.getView());
 
@@ -76,10 +89,38 @@ public class MainWindow {
         statusLabel = new Label("Ready");
         statusLabel.setFont(Font.font("Microsoft YaHei", 11));
         statusLabel.setTextFill(Color.web("#8e8e93"));
-        statusLabel.setPadding(new Insets(4, 16, 4, 16));
+       statusLabel.setPadding(new Insets(4, 16, 4, 16));
 
-        // Tab bar
-        HBox tabBar = createTabBar();
+       // Batch action bar (hidden by default)
+       batchBar = new HBox();
+       batchBar.setAlignment(Pos.CENTER);
+       batchBar.setSpacing(14);
+       batchBar.setPadding(new Insets(8, 16, 8, 16));
+       batchBar.setStyle("-fx-background-color: rgba(248,248,248,0.95); " +
+               "-fx-border-color: #c6c6c8; -fx-border-width: 0.5 0 0 0;");
+       batchBar.setVisible(false);
+       batchBar.setManaged(false);
+
+       batchLabel = new Label("");
+       batchLabel.setFont(Font.font("Microsoft YaHei", 12));
+       batchLabel.setTextFill(Color.web("#1d1d1f"));
+
+       Button batchFavBtn = new Button("Favorite");
+       batchFavBtn.setFont(Font.font("Microsoft YaHei", 12));
+       batchFavBtn.setTextFill(Color.web("#007AFF"));
+       batchFavBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
+       batchFavBtn.setOnAction(e -> batchFavorite());
+
+       Button batchDelBtn = new Button("Delete");
+       batchDelBtn.setFont(Font.font("Microsoft YaHei", 12));
+       batchDelBtn.setTextFill(Color.web("#FF3B30"));
+       batchDelBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
+       batchDelBtn.setOnAction(e -> batchDelete());
+
+       batchBar.getChildren().addAll(batchLabel, batchFavBtn, batchDelBtn);
+
+       // Tab bar
+       HBox tabBar = createTabBar();
         tabBar.setStyle("-fx-background-color: rgba(248,248,248,0.92); " +
                 "-fx-border-color: #c6c6c8; -fx-border-width: 0.5 0 0 0;");
         tabBar.setMinHeight(50);
@@ -89,9 +130,9 @@ public class MainWindow {
         // Root
         BorderPane mainPane = new BorderPane();
         mainPane.setTop(topBar);
-        mainPane.setCenter(contentArea);
-        mainPane.setBottom(new VBox(0, statusLabel, tabBar));
-        mainPane.setStyle("-fx-background-color: #f2f2f7;");
+       mainPane.setCenter(contentArea);
+       mainPane.setBottom(new VBox(0, batchBar, statusLabel, tabBar));
+       mainPane.setStyle("-fx-background-color: #f2f2f7;");
 
         root = mainPane;
 
@@ -135,9 +176,12 @@ public class MainWindow {
 
         photosTabBtn.setTextFill(tab == 0 ? Color.web("#007AFF") : Color.web("#8e8e93"));
         albumsTabBtn.setTextFill(tab == 1 ? Color.web("#007AFF") : Color.web("#8e8e93"));
-        titleLabel.setText(tab == 0 ? "Photos" : "Albums");
+       titleLabel.setText(tab == 0 ? "Photos" : "Albums");
 
-        contentArea.getChildren().clear();
+       selectBtn.setVisible(tab == 0);
+       if (tab != 0 && selectMode) toggleSelectMode();
+
+       contentArea.getChildren().clear();
         if (tab == 0) {
             contentArea.getChildren().add(photoGridView.getView());
             photoGridView.refresh();
@@ -207,4 +251,46 @@ public class MainWindow {
         if (currentTab == 0) photoGridView.refresh();
         else albumListView.refresh();
     }
+    void toggleSelectMode() {
+        selectMode = !selectMode;
+        if (selectMode) {
+            selectBtn.setText("Cancel");
+            chooseFolderBtn.setVisible(false);
+            photoGridView.enterSelectMode();
+            batchBar.setVisible(true);
+            batchBar.setManaged(true);
+            batchLabel.setText("0 selected");
+        } else {
+            selectBtn.setText("Select");
+            chooseFolderBtn.setVisible(true);
+            photoGridView.exitSelectMode();
+            batchBar.setVisible(false);
+            batchBar.setManaged(false);
+        }
+    }
+
+    void updateBatchCount(int count) {
+        batchLabel.setText(count + " selected");
+    }
+
+    private void batchFavorite() {
+        Set<Photo> selected = photoGridView.getSelectedPhotos();
+        if (selected.isEmpty()) return;
+        for (Photo p : selected) p.setFavorite(true);
+        toggleSelectMode();
+        setStatus("Favorited " + selected.size() + " photos");
+    }
+
+    private void batchDelete() {
+        Set<Photo> selected = photoGridView.getSelectedPhotos();
+        if (selected.isEmpty()) return;
+        PhotoService service = PhotoService.getInstance();
+        for (Photo p : selected) service.deletePhoto(p);
+        toggleSelectMode();
+        scanPhotos();
+        setStatus("Deleted " + selected.size() + " photos");
+    }
+
+    boolean isSelectMode() { return selectMode; }
+
 }
