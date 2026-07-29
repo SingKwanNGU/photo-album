@@ -620,6 +620,8 @@ public class PhotoViewer {
        VBox menu = new VBox(0);
        menu.setAlignment(Pos.CENTER);
        menu.setPadding(new Insets(4, 6, 4, 6));
+       menu.setPrefSize(100, 50);
+       menu.setMaxSize(100, 50);
        menu.setStyle("-fx-background-color: rgba(44,44,46,0.95); -fx-background-radius: 14;");
        menu.setId("editOverlay");
 
