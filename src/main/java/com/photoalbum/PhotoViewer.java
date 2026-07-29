@@ -105,6 +105,25 @@ public class PhotoViewer {
         nextImageView.setVisible(false);
 
        imageContainer = new StackPane(prevImageView, nextImageView, imageView);
+
+       // Left arrow
+       Button leftBtn = new Button("\u2039");
+       leftBtn.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 28));
+       leftBtn.setTextFill(Color.web("#cccccc"));
+       leftBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 4 8 4 8;");
+       leftBtn.setOnAction(e -> { if (currentIndex > 0) navigateTo(currentIndex - 1); });
+       StackPane.setAlignment(leftBtn, Pos.CENTER_LEFT);
+
+       // Right arrow
+       Button rightBtn = new Button("\u203a");
+       rightBtn.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 28));
+       rightBtn.setTextFill(Color.web("#cccccc"));
+       rightBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 4 8 4 8;");
+       rightBtn.setOnAction(e -> { if (currentIndex < photoList.size() - 1) navigateTo(currentIndex + 1); });
+       StackPane.setAlignment(rightBtn, Pos.CENTER_RIGHT);
+
+       imageContainer.getChildren().addAll(leftBtn, rightBtn);
+
        imageContainer.setStyle("-fx-background-color: black;");
        imageContainer.setAlignment(Pos.CENTER);
        imageContainer.setPrefSize(390, 520);
@@ -297,11 +316,8 @@ public class PhotoViewer {
            }
        });
 
-        root.setOnMousePressed(this::onMousePressed);
-        root.setOnMouseDragged(this::onMouseDragged);
-        root.setOnMouseReleased(this::onMouseReleased);
-        root.setOnScroll(this::onScroll);
-    }
+       root.setOnScroll(this::onScroll);
+   }
 
     private void onMousePressed(MouseEvent e) {
         dragStartX = e.getSceneX();
@@ -382,12 +398,10 @@ public class PhotoViewer {
         ft.play();
     }
 
-    private void resetImagePosition() {
-        imageView.setTranslateX(0);
-        imageView.setOpacity(1.0);
-        prevImageView.setVisible(false);
-        nextImageView.setVisible(false);
-    }
+   private void resetImagePosition() {
+       imageView.setTranslateX(0);
+       imageView.setOpacity(1.0);
+   }
 
     private void onScroll(ScrollEvent e) {
         double zoomFactor = e.getDeltaY() > 0 ? 1.1 : 1.0 / 1.1;
