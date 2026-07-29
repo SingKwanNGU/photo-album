@@ -617,26 +617,26 @@ public class PhotoViewer {
 
   private void showMenu() {
        hideDeleteConfirm();
-       VBox menu = new VBox(6);
+       VBox menu = new VBox(4);
        menu.setAlignment(Pos.CENTER);
-       menu.setPadding(new Insets(14, 20, 14, 20));
+       menu.setPadding(new Insets(8, 12, 8, 12));
        menu.setStyle("-fx-background-color: rgba(44,44,46,0.95); -fx-background-radius: 14;");
-       menu.setMaxWidth(200);
+       menu.setMaxWidth(160);
        menu.setId("editOverlay");
 
        SVGPath playIcon = new SVGPath();
        playIcon.setContent("M8 5v14l11-7z");
        playIcon.setFill(Color.WHITE);
        StackPane playPane = new StackPane(playIcon);
-       playPane.setMinSize(20, 20);
-       playPane.setMaxSize(20, 20);
+       playPane.setMinSize(16, 16);
+       playPane.setMaxSize(16, 16);
 
-       Button slideBtn = new Button("Slideshow", playPane);
-       slideBtn.setFont(Font.font("Microsoft YaHei", 14));
+       Button slideBtn = new Button("\u5e7b\u706f\u7247", playPane);
+       slideBtn.setFont(Font.font("Microsoft YaHei", 13));
        slideBtn.setTextFill(Color.WHITE);
        slideBtn.setContentDisplay(javafx.scene.control.ContentDisplay.LEFT);
-       slideBtn.setGraphicTextGap(10);
-       slideBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 8 16 8 16;");
+       slideBtn.setGraphicTextGap(8);
+       slideBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 6 10 6 10;");
        slideBtn.setMaxWidth(Double.MAX_VALUE);
        slideBtn.setOnAction(e -> { hideEditOverlay(); startSingleSlideshow(); });
 
