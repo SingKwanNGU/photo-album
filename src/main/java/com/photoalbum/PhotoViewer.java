@@ -638,14 +638,7 @@ public class PhotoViewer {
        slideBtn.setMaxWidth(Double.MAX_VALUE);
        slideBtn.setOnAction(e -> { hideEditOverlay(); startSingleSlideshow(); });
 
-       Button editBtn = new Button("Edit");
-       editBtn.setFont(Font.font("Microsoft YaHei", 14));
-       editBtn.setTextFill(Color.WHITE);
-       editBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 8 16 8 16;");
-       editBtn.setMaxWidth(Double.MAX_VALUE);
-       editBtn.setOnAction(e -> { hideEditOverlay(); showEditOverlay(); });
-
-       menu.getChildren().addAll(editBtn, slideBtn);
+       menu.getChildren().addAll(slideBtn);
        rootLayout.getChildren().add(menu);
        StackPane.setAlignment(menu, Pos.TOP_RIGHT);
        StackPane.setMargin(menu, new Insets(54, 10, 0, 0));
