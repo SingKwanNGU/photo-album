@@ -334,31 +334,30 @@ public class MainWindow {
        VBox dialog = new VBox(8);
        dialog.setAlignment(Pos.CENTER);
        dialog.setPadding(new Insets(12, 14, 12, 14));
+       dialog.setPrefSize(100, 100);
+       dialog.setMaxSize(100, 100);
        dialog.setStyle("-fx-background-color: rgba(255,255,255,0.96); -fx-background-radius: 14; " +
                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 0, 4);");
-       dialog.setMaxWidth(100);
-       dialog.setMaxHeight(100);
        dialog.setId("confirmDialog");
 
-       Label warning = new Label("Please confirm delete?");
-       warning.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 11));
+       Label warning = new Label("\u786e\u8ba4\u5220\u9664\u561b\uff1f");
+       warning.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 10));
        warning.setTextFill(Color.web("#1d1d1f"));
        warning.setWrapText(true);
        warning.setAlignment(Pos.CENTER);
        warning.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
 
-       Button yesBtn = new Button("Delete");
-       yesBtn.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 10));
+       Button yesBtn = new Button("\u5220\u9664");
+       yesBtn.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 9));
        yesBtn.setTextFill(Color.WHITE);
        yesBtn.setStyle("-fx-background-color: #FF3B30; -fx-background-radius: 12; " +
                "-fx-cursor: hand; -fx-padding: 4 12 4 12;");
        yesBtn.setOnAction(e -> { hideConfirmDialog(); executeBatchDelete(); });
 
-       Button noBtn = new Button("Cancel");
-       noBtn.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 10));
-       noBtn.setTextFill(Color.web("#1d1d1f"));
-       noBtn.setStyle("-fx-background-color: transparent; -fx-border-color: #1d1d1f; " +
-               "-fx-border-radius: 12; -fx-background-radius: 12; " +
+       Button noBtn = new Button("\u53d6\u6d88");
+       noBtn.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 9));
+       noBtn.setTextFill(Color.WHITE);
+       noBtn.setStyle("-fx-background-color: #007AFF; -fx-background-radius: 12; " +
                "-fx-cursor: hand; -fx-padding: 4 12 4 12;");
        noBtn.setOnAction(e -> hideConfirmDialog());
 

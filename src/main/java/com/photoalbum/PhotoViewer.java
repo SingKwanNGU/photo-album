@@ -534,25 +534,24 @@ public class PhotoViewer {
       if (currentPhoto == null) return;
       hideDeleteConfirm();
 
-       Label warning = new Label("Please confirm delete?");
-       warning.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 11));
+       Label warning = new Label("\u786e\u8ba4\u5220\u9664\u561b\uff1f");
+       warning.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 10));
        warning.setTextFill(Color.web("#1d1d1f"));
        warning.setWrapText(true);
        warning.setAlignment(Pos.CENTER);
        warning.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
 
-       Button yesBtn = new Button("Delete");
-       yesBtn.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 10));
+       Button yesBtn = new Button("\u5220\u9664");
+       yesBtn.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 9));
        yesBtn.setTextFill(Color.WHITE);
        yesBtn.setStyle("-fx-background-color: #FF3B30; -fx-background-radius: 12; " +
                "-fx-cursor: hand; -fx-padding: 4 12 4 12;");
        yesBtn.setOnAction(e -> { hideDeleteConfirm(); deleteCurrent(); });
 
-       Button noBtn = new Button("Cancel");
-       noBtn.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 10));
-       noBtn.setTextFill(Color.web("#1d1d1f"));
-       noBtn.setStyle("-fx-background-color: transparent; -fx-border-color: #1d1d1f; " +
-               "-fx-border-radius: 12; -fx-background-radius: 12; " +
+       Button noBtn = new Button("\u53d6\u6d88");
+       noBtn.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 9));
+       noBtn.setTextFill(Color.WHITE);
+       noBtn.setStyle("-fx-background-color: #007AFF; -fx-background-radius: 12; " +
                "-fx-cursor: hand; -fx-padding: 4 12 4 12;");
        noBtn.setOnAction(e -> hideDeleteConfirm());
 
@@ -561,22 +560,22 @@ public class PhotoViewer {
 
        VBox confirmOverlay = new VBox(8, warning, confirmBox);
        confirmOverlay.setAlignment(Pos.CENTER);
-       confirmOverlay.setPadding(new Insets(12, 14, 12, 14));
+       confirmOverlay.setPadding(new Insets(10, 10, 10, 10));
+       confirmOverlay.setPrefSize(100, 100);
+       confirmOverlay.setMaxSize(100, 100);
        confirmOverlay.setStyle("-fx-background-color: rgba(255,255,255,0.96); -fx-background-radius: 14; " +
                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 0, 4);");
-       confirmOverlay.setMaxWidth(100);
-       confirmOverlay.setMaxHeight(100);
        confirmOverlay.setId("confirmOverlay");
 
        confirmVisible = true;
-       rootLayout.getChildren().add(confirmOverlay);
+       root.getChildren().add(confirmOverlay);
        StackPane.setAlignment(confirmOverlay, Pos.BOTTOM_CENTER);
        StackPane.setMargin(confirmOverlay, new Insets(0, 0, 60, 0));
    }
 
    private void hideDeleteConfirm() {
        confirmVisible = false;
-       rootLayout.getChildren().removeIf(node -> "confirmOverlay".equals(node.getId()));
+       root.getChildren().removeIf(node -> "confirmOverlay".equals(node.getId()));
    }
 
    private void deleteCurrent() {
