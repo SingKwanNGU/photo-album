@@ -561,8 +561,8 @@ public class PhotoViewer {
        VBox confirmOverlay = new VBox(8, warning, confirmBox);
        confirmOverlay.setAlignment(Pos.CENTER);
        confirmOverlay.setPadding(new Insets(10, 10, 10, 10));
-       confirmOverlay.setPrefSize(100, 100);
-       confirmOverlay.setMaxSize(100, 100);
+       confirmOverlay.setPrefSize(200, 80);
+       confirmOverlay.setMaxSize(200, 80);
        confirmOverlay.setStyle("-fx-background-color: rgba(255,255,255,0.96); -fx-background-radius: 14; " +
                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 0, 4);");
        confirmOverlay.setId("confirmOverlay");

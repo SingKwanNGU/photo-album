@@ -334,8 +334,8 @@ public class MainWindow {
        VBox dialog = new VBox(8);
        dialog.setAlignment(Pos.CENTER);
        dialog.setPadding(new Insets(12, 14, 12, 14));
-       dialog.setPrefSize(100, 100);
-       dialog.setMaxSize(100, 100);
+       dialog.setPrefSize(200, 80);
+       dialog.setMaxSize(200, 80);
        dialog.setStyle("-fx-background-color: rgba(255,255,255,0.96); -fx-background-radius: 14; " +
                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 0, 4);");
        dialog.setId("confirmDialog");
