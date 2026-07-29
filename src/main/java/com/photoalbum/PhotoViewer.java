@@ -42,9 +42,7 @@ public class PhotoViewer {
 
    private final StackPane root;
    private final BorderPane rootLayout;
-   private Button backBtn;
-   private VBox datePillPane;
-   private Button menuBtn;
+   private final HBox navBar;
    private final StackPane imageContainer;
    private final ImageView imageView;
    private final HBox bottomOverlay;
@@ -115,9 +113,11 @@ public class PhotoViewer {
        imageView.setFitWidth(390);
        imageView.setFitHeight(520);
 
+       navBar = createNavBar();
        bottomOverlay = createBottomOverlay();
 
        rootLayout = new BorderPane();
+       rootLayout.setTop(navBar);
        rootLayout.setCenter(imageContainer);
        rootLayout.setBottom(bottomOverlay);
        rootLayout.setStyle("-fx-background-color: black;");
@@ -125,39 +125,26 @@ public class PhotoViewer {
        root = new StackPane(rootLayout);
        root.setStyle("-fx-background-color: black;");
 
-       // Nav elements floated on outer root
-       root.getChildren().addAll(
-               createBackBtn(),
-               createDatePill(),
-               createMenuBtn()
-       );
-       StackPane.setAlignment(backBtn, Pos.TOP_LEFT);
-       StackPane.setMargin(backBtn, new Insets(8, 0, 0, 12));
-       StackPane.setAlignment(datePillPane, Pos.TOP_CENTER);
-       StackPane.setMargin(datePillPane, new Insets(8, 0, 0, 0));
-       StackPane.setAlignment(menuBtn, Pos.TOP_RIGHT);
-       StackPane.setMargin(menuBtn, new Insets(8, 10, 0, 0));
-
        setupGestures();
    }
 
-  private Button createBackBtn() {
-       Circle circle = new Circle(15);
-       circle.setFill(Color.web("#3a3a3c"));
-       Label arrow = new Label("<");
-       arrow.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 18));
-       arrow.setTextFill(Color.WHITE);
-       StackPane icon = new StackPane(circle, arrow);
-       icon.setMinSize(32, 32);
-       icon.setMaxSize(32, 32);
-       backBtn = new Button();
-       backBtn.setGraphic(icon);
+  private HBox createNavBar() {
+       Circle backCircle = new Circle(15);
+       backCircle.setFill(Color.web("#3a3a3c"));
+
+       Label backArrow = new Label("<");
+       backArrow.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 18));
+       backArrow.setTextFill(Color.WHITE);
+
+       StackPane backIcon = new StackPane(backCircle, backArrow);
+       backIcon.setMinSize(32, 32);
+       backIcon.setMaxSize(32, 32);
+
+       Button backBtn = new Button();
+       backBtn.setGraphic(backIcon);
        backBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;");
        backBtn.setOnAction(e -> close());
-       return backBtn;
-   }
 
-   private VBox createDatePill() {
        photoDateLabel = new Label("");
        photoDateLabel.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD, 15));
        photoDateLabel.setTextFill(Color.WHITE);
@@ -166,16 +153,26 @@ public class PhotoViewer {
        timeLabel.setFont(Font.font("Microsoft YaHei", 11));
        timeLabel.setTextFill(Color.web("#cccccc"));
 
-       datePillPane = new VBox(1, photoDateLabel, timeLabel);
-       datePillPane.setAlignment(Pos.CENTER);
-       datePillPane.setStyle("-fx-background-color: rgba(58,58,60,0.85); " +
+       VBox datePill = new VBox(1, photoDateLabel, timeLabel);
+       datePill.setAlignment(Pos.CENTER);
+       datePill.setStyle("-fx-background-color: rgba(58,58,60,0.85); " +
                "-fx-background-radius: 16; -fx-padding: 6 18 6 18;");
-       return datePillPane;
-   }
 
-   private Button createMenuBtn() {
-       menuBtn = createCircleIconBtn("\u22ef", 16, e -> showMenu());
-       return menuBtn;
+       Region spacer = new Region();
+       HBox.setHgrow(spacer, Priority.ALWAYS);
+
+       Region spacer2 = new Region();
+       HBox.setHgrow(spacer2, Priority.ALWAYS);
+
+       // Three-dot menu button
+       Button menuBtn = createCircleIconBtn("\u22ef", 16, e -> showMenu());
+
+       HBox bar = new HBox(backBtn, spacer, datePill, spacer2, menuBtn);
+       bar.setAlignment(Pos.CENTER);
+       bar.setPadding(new Insets(8, 12, 8, 12));
+       bar.setStyle("-fx-background-color: rgba(0,0,0,0.85);");
+       bar.setMinHeight(48);
+       return bar;
    }
 
    private HBox createBottomOverlay() {
