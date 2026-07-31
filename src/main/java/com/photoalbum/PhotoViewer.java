@@ -311,6 +311,7 @@ public class PhotoViewer {
    private void setupGestures() {
        root.setOnMouseClicked(e -> {
            if (!isDragging && e.getClickCount() == 1) {
+               if (root.getChildren().removeIf(n -> "editOverlay".equals(n.getId()))) return;
                if (slideshowMode) { stopSlideshow(); return; }
                toggleOverlay();
            }
